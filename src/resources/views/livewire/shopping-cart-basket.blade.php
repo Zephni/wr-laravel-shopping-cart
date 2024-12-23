@@ -1,5 +1,5 @@
 <div
-    x-data="{ open: true, timer: null }"
+    x-data="{ open: false, timer: null }"
     @mouseenter="clearTimeout(timer); open = true"
     @mouseleave="timer = setTimeout(() => open = false, 300)"
     class="relative"
@@ -15,7 +15,7 @@
     <div
         x-show="open"
         x-transition
-        style="top: calc(100% + 10px);"
+        style="top: calc(100% + 4px);"
         class="z-30 absolute right-0 w-72 px-1 py-1 bg-white border border-slate-300 text-slate-600 shadow-lg rounded-md"
     >
         <div class="flex flex-col gap-1">
