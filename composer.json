@@ -1,0 +1,28 @@
+{
+    "name": "webregulate/laravel-shopping-cart",
+    "description": "WebRegulate Shopping Cart",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "WebRegulate\\LaravelShoppingCart\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "WebRegulate\\LaravelShoppingCart\\WRShoppingCart"
+            ]
+        }
+    },
+    "authors": [
+        {
+            "name": "Craig Dennis",
+            "email": "craig.dennis@webregulate.co.uk"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": "^8.2",
+        "livewire/livewire": "^3.4"
+    }
+}
