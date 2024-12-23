@@ -6,6 +6,7 @@ use Livewire\Livewire;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use WebRegulate\LaravelShoppingCart\Livewire\ShoppingCartBasket;
 
 class WRLaravelShoppingCartServiceProvider extends ServiceProvider
 {
@@ -15,7 +16,7 @@ class WRLaravelShoppingCartServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Merge config
-        $this->mergeConfigFrom(__DIR__ . '/config/wr-laravel-shopping-cart', 'wr-laravel-shopping-cart');
+        $this->mergeConfigFrom(__DIR__ . '/config/wr-laravel-shopping-cart.php', 'wr-laravel-shopping-cart');
 
         // Merge wrla info and error logging channels
         $this->app->make('config')->set('logging.channels.wrla-info', [
@@ -38,7 +39,7 @@ class WRLaravelShoppingCartServiceProvider extends ServiceProvider
      * Bootstrap services.
      */
     public function boot(): void
-    {
+    {        
         // Publish assets
         $this->publishableAssets();
 
@@ -105,7 +106,7 @@ class WRLaravelShoppingCartServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/resources/views', 'wr-laravel-shopping-cart');
 
         // Livewire component registering and asset injection
-        // Livewire::component('wr-laravel-shopping-cart.something-here', LivewireClass::class);
+        Livewire::component('shopping-cart-basket', ShoppingCartBasket::class);
         Livewire::forceAssetInjection();
 
         // Load custom blade directives
