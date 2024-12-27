@@ -16,20 +16,22 @@
         x-show="open"
         x-transition
         style="top: calc(100% + 4px);"
-        class="shopping-cart-basket-dropdown-menu z-30 absolute right-0 w-72 px-1 py-1 bg-white border border-slate-300 text-slate-600 shadow-lg rounded-md"
+        class="shopping-cart-basket-dropdown-menu z-30 absolute right-0 w-72 px-1 py-1 bg-white border border-slate-300 text-slate-600 shadow-lg rounded-md select-none"
     >
         <div class="flex flex-col gap-1">
-            @for($i = 0; $i < 3; $i++)
-                {{-- Product example --}}
+            {{-- Cart items --}}
+            @forelse($shoppingCart->getShoppingCartItems() as $cartItemData)
                 <div class="shopping-cart-basket-product flex justify-between items-center gap-2 px-1 py-1 bg-slate-100 border border-slate-200 rounded-md">
                     <img src="https://via.placeholder.com/64" alt="Product" class="w-16 h-16 border border-slate-300 rounded-md" />
                     <div class="text-sm">
-                        <p>Product Name</p>
-                        <p class="text-slate-400">Quantity: 1</p>
-                        <p class="text-slate-400">Price: £2.50</p>
+                        <p>{{ $cartItemData->model->getCartName() }}</p>
+                        <p class="text-slate-400">Quantity: {{ $cartItemData->quantity }}</p>
+                        <p class="text-slate-400">Price: £{{ $cartItemData->model->getCartPrice() }}</p>
                     </div>
                 </div>
-            @endfor
+            @empty
+                <div class="text-center text-slate-400 py-3">No items in cart</div>
+            @endforelse
         </div>
     </div>
 </div>

@@ -4,24 +4,46 @@ namespace WebRegulate\LaravelShoppingCart\Classes;
 class ShoppingCartSession extends ShoppingCartBase
 {
     /**
+     * Constructor
+     * 
+     * @return static
+     */
+    public function __construct()
+    {
+        // Get the unique identifier from session
+        $uniqueId = session()->get(config('wr-laravel-shopping-cart.sessionKeyName'), null);
+
+        // If no unique identifier exists, create one
+        if (empty($uniqueId)) {
+            $uniqueId = uuid_create();
+            session()->put(config('wr-laravel-shopping-cart.sessionKeyName'), $uniqueId);
+        }
+
+        // Call parent constructor
+        parent::__construct($uniqueId);
+    }
+
+    /**
      * Saves current data to storage
      * 
-     * @param string $uniqueId
      * @return bool True if successful, false otherwise
      */
-    public function save(string $uniqueId): bool
+    public function save(): bool
     {
+        // Store data in session
+        session()->put($this->uniqueId, $this->shoppingCartData);
+
         return true;
     }
 
     /**
      * Retrieves the data from storage and promises to store in data property
      * 
-     * @param string $uniqueId
      * @return void
      */
-    public function load(string $uniqueId): void
+    public function load(): void
     {
-        
+        // Load data from session
+        $this->shoppingCartData = session()->get($this->uniqueId, []);
     }
 }

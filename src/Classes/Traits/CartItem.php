@@ -40,7 +40,7 @@ trait CartItem
     public function buildCartItemData(float $quantity, array $options): array
     {
         return [
-            'model' => get_class($this),
+            'modelClass' => get_class($this),
             'modelId' => $this->id,
             'quantity' => $quantity,
             'options' => $options

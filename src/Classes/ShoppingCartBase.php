@@ -7,9 +7,17 @@ use WebRegulate\LaravelShoppingCart\Classes\Traits\CartItem;
 abstract class ShoppingCartBase
 {
     /**
+     * Unique identifier for the shopping cart
+     * 
+     * @var string
+     */
+    protected string $uniqueId;
+
+    /**
      * Shopping cart data. Note that each item in the cart MUST use this format (use the buildCartItemData method from the CartItem trait):
      * [
-     *     'model' => 'App\Models\Product', // The product model associated with this item. Note that the model must implement the CartItem trait and set it's getCartName, getCartOptions, and getCartPrice methods
+     *     'model' => null, // Make sure extending classes call parent::__construct($uniqueId), this will set the unique identifier and load the shopping cart data, then loop through the data and set the model instances
+     *     'modelClass' => 'App\Models\Product', // The product model associated with this item. Note that the model must implement the CartItem trait and set it's getCartName, getCartOptions, and getCartPrice methods
      *     'modelId' => 1, // The ID of the product model
      *     'quantity' => 1, // The quantity of this item
      *     'options' => [] // The options of this item
@@ -20,20 +28,36 @@ abstract class ShoppingCartBase
     protected array $shoppingCartData = [];
 
     /**
-     * Saves current data to storage
+     * Constructor
      * 
      * @param string $uniqueId
+     * @return static
+     */
+    public function __construct(string $uniqueId)
+    {
+        // Set unique identifier and load shopping cart data
+        $this->uniqueId = $uniqueId;
+        $this->load();
+        
+        // Loop through shopping cart data and set model instances
+        foreach ($this->shoppingCartData as $key => $item) {
+            $this->shoppingCartData[$key]['model'] = app($item['modelClass'])->find($item['modelId']);
+        }
+    }
+
+    /**
+     * Saves current data to storage with $this->uniqueId
+     * 
      * @return bool True if successful, false otherwise
      */
-    abstract public function save(string $uniqueId): bool;
+    abstract public function save(): bool;
 
     /**
      * Retrieves the data from storage and promises to store in data property
      * 
-     * @param string $uniqueId
      * @return void
      */
-    abstract public function load(string $uniqueId): void;
+    abstract public function load(): void;
 
     /**
      * Add cart item, adds new, or increments quantity and merges options if item already exists
@@ -97,6 +121,16 @@ abstract class ShoppingCartBase
                 return;
             }
         }
+    }
+
+    /**
+     * Get cart item models
+     * 
+     * @return array
+     */
+    public function getShoppingCartItems(): array
+    {
+        return $this->shoppingCartData;
     }
 
     /**

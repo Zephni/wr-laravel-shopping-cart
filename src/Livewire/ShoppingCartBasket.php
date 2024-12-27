@@ -12,6 +12,10 @@ class ShoppingCartBasket extends Component
 
     public function render()
     {
-        return view('wr-laravel-shopping-cart::livewire.shopping-cart-basket');
+        $shoppingCart = app('WRLaravelShoppingCart');
+
+        return view('wr-laravel-shopping-cart::livewire.shopping-cart-basket', [
+            'shoppingCart' => $shoppingCart
+        ]);
     }
 }
