@@ -79,6 +79,9 @@ abstract class ShoppingCartBase
                 return;
             }
         }
+
+        // Save
+        $this->save();
     }
 
     /**

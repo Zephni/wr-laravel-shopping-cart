@@ -11,12 +11,12 @@ class ShoppingCartSession extends ShoppingCartBase
     public function __construct()
     {
         // Get the unique identifier from session
-        $uniqueId = session()->get(config('wr-laravel-shopping-cart.sessionKeyName'), null);
+        $uniqueId = session()->get(config('wr-laravel-shopping-cart.uniqueSessionIdKeyName'), null);
 
         // If no unique identifier exists, create one
         if (empty($uniqueId)) {
             $uniqueId = uuid_create();
-            session()->put(config('wr-laravel-shopping-cart.sessionKeyName'), $uniqueId);
+            session()->put(config('wr-laravel-shopping-cart.uniqueSessionIdKeyName'), $uniqueId);
         }
 
         // Call parent constructor
@@ -31,7 +31,7 @@ class ShoppingCartSession extends ShoppingCartBase
     public function save(): bool
     {
         // Store data in session
-        session()->put($this->uniqueId, $this->shoppingCartData);
+        session()->put('wr-laravel-shopping-cart-'.$this->uniqueId, $this->shoppingCartData);
 
         return true;
     }
@@ -44,6 +44,6 @@ class ShoppingCartSession extends ShoppingCartBase
     public function load(): void
     {
         // Load data from session
-        $this->shoppingCartData = session()->get($this->uniqueId, []);
+        $this->shoppingCartData = session()->get('wr-laravel-shopping-cart-'.$this->uniqueId, []);
     }
 }

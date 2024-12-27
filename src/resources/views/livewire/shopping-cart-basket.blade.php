@@ -35,6 +35,10 @@
                 <div class="text-center text-slate-400 py-2">
                     <i class="fas fa-shopping-cart text-md pr-2"></i>
                     <span>No items in cart</span>
+
+                    <p>{{ json_encode(config('wr-laravel-shopping-cart.uniqueSessionIdKeyName')) }}</p>
+                    <p>{{ json_encode(session()->get('wr-laravel-shopping-cart-'.config('wr-laravel-shopping-cart.uniqueSessionIdKeyName'), [])) }}</p>
+                    
                 </div>
             @endforelse
         </div>
