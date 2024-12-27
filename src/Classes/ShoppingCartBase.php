@@ -76,11 +76,13 @@ abstract class ShoppingCartBase
             if ($item['model'] == get_class($model) && $item['modelId'] == $model->id) {
                 $this->shoppingCartData[$key]['quantity'] += $quantity;
                 $this->shoppingCartData[$key]['options'] = array_merge($this->shoppingCartData[$key]['options'], $options);
+                $this->save();
                 return;
             }
         }
 
-        // Save
+        // Otherwise append and save
+        $this->shoppingCartData[] = $model->buildCartItemData($quantity, $options);
         $this->save();
     }
 
@@ -112,18 +114,30 @@ abstract class ShoppingCartBase
      * @param Model $model
      * @param array $options
      */
-    public function removeCartItem(Model $model, array $options = []): void
+    public function removeCartItemByModelAndOptions(Model $model, array $options = []): void
     {
         // Check valid cart item model
         $this->throwExceptionIfInvalidCartItemModel($model);
 
         // If item already exists in cart, remove it
         foreach ($this->shoppingCartData as $key => $item) {
-            if ($item['model'] == get_class($model) && $item['modelId'] == $model->id) {
+            if ($item['model'] == get_class($model) && $item['modelId'] == $model->id && $item['options'] == $options) {
                 unset($this->shoppingCartData[$key]);
                 return;
             }
         }
+    }
+
+    /**
+     * Remove cart item by row index
+     * 
+     * @param int $rowIndex
+     * @return static
+     */
+    public function removeCartItem(int $rowIndex): void
+    {
+        unset($this->shoppingCartData[$rowIndex]);
+        $this->save();
     }
 
     /**
@@ -144,6 +158,22 @@ abstract class ShoppingCartBase
     public function getCartItemsCount(): int
     {
         return count($this->shoppingCartData);
+    }
+
+    /**
+     * Get shopping cart data array without model instances
+     * 
+     * @return array
+     */
+    public function getShoppingCartDataWithoutModels(): array
+    {
+        // Unset model instances
+        $shoppingCartData = $this->shoppingCartData;
+        foreach ($shoppingCartData as $key => $item) {
+            unset($shoppingCartData[$key]['model']);
+        }
+
+        return $shoppingCartData;
     }
 
     /**

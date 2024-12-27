@@ -22,23 +22,30 @@
     >
         <div class="flex flex-col gap-1">
             {{-- Cart items --}}
-            @forelse($shoppingCart->getCartItems() as $cartItemData)
+            @forelse($shoppingCart->getCartItems() as $key => $cartItemData)
                 <div class="shopping-cart-basket-product flex justify-between items-center gap-2 px-1 py-1 bg-slate-100 border border-slate-200 rounded-md">
                     <img src="https://via.placeholder.com/64" alt="Product" class="w-16 h-16 border border-slate-300 rounded-md" />
                     <div class="text-sm">
-                        <p>{{ $cartItemData->model->getCartName() }}</p>
-                        <p class="text-slate-400">Quantity: {{ $cartItemData->quantity }}</p>
-                        <p class="text-slate-400">Price: £{{ $cartItemData->model->getCartPrice() }}</p>
+                        <p>{{ $cartItemData['model']->getCartName($cartItemData['quantity'], $cartItemData['options']) }}</p>
+                        <p class="text-slate-400">Quantity: {{ $cartItemData['quantity'] }}</p>
+                        <p class="text-slate-400">Price: £{{ $cartItemData['model']->getCartPrice($cartItemData['quantity'], $cartItemData['options']) }}</p>
                     </div>
+                    <button
+                        wire:click="removeFromCart('{{ $key }}')"
+                        class="shopping-cart-basket-remove-item-btn text-slate-400 hover:text-primary-500"
+                    >
+                        <i wire:loading.remove class="fas fa-trash"></i>
+                        <i wire:loading class="fas fa-spinner fa-spin"></i>
+                    </button>
                 </div>
             @empty
                 <div class="text-center text-slate-400 py-2">
                     <i class="fas fa-shopping-cart text-md pr-2"></i>
                     <span>No items in cart</span>
-
-                    <p>{{ json_encode(config('wr-laravel-shopping-cart.uniqueSessionIdKeyName')) }}</p>
-                    <p>{{ json_encode(session()->get('wr-laravel-shopping-cart-'.config('wr-laravel-shopping-cart.uniqueSessionIdKeyName'), [])) }}</p>
-                    
+                    {{-- 
+                        <p>{{ json_encode(config('wr-laravel-shopping-cart.uniqueSessionIdKeyName')) }}</p>
+                        <p>{{ json_encode(session()->get('wr-laravel-shopping-cart-'.config('wr-laravel-shopping-cart.uniqueSessionIdKeyName'), [])) }}</p>
+                    --}}
                 </div>
             @endforelse
         </div>

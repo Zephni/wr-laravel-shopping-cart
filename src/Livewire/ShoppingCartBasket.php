@@ -16,6 +16,7 @@ class ShoppingCartBasket extends Component
     public $listeners = [
         'shoppingCartUpdated' => 'render',
         'addToCart' => 'addToCart',
+        'removeFromCart' => 'removeFromCart',
     ];
 
     /**
@@ -29,9 +30,20 @@ class ShoppingCartBasket extends Component
      */
     public function addToCart(string $modelClass, int $modelId, float $quantity = 1, array $options = [])
     {
-        $shoppingCart = app('WRLaravelShoppingCart');
         $model = $modelClass::find($modelId);
-        $shoppingCart->addCartItem($model, $quantity, $options);
+        app('WRLaravelShoppingCart')->addCartItem($model, $quantity, $options);
+        $this->render();
+    }
+
+    /**
+     * Remove an item from the shopping cart.
+     *
+     * @param int $rowIndex The row index of the item to remove.
+     * @return void
+     */
+    public function removeFromCart(int $rowIndex)
+    {
+        app('WRLaravelShoppingCart')->removeCartItem($rowIndex);
         $this->render();
     }
 
@@ -42,10 +54,8 @@ class ShoppingCartBasket extends Component
      */
     public function render()
     {
-        $shoppingCart = app('WRLaravelShoppingCart');
-
         return view('wr-laravel-shopping-cart::livewire.shopping-cart-basket', [
-            'shoppingCart' => $shoppingCart
+            'shoppingCart' => app('WRLaravelShoppingCart')
         ]);
     }
 }

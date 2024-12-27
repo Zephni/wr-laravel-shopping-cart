@@ -31,7 +31,7 @@ class ShoppingCartSession extends ShoppingCartBase
     public function save(): bool
     {
         // Store data in session
-        session()->put('wr-laravel-shopping-cart-'.$this->uniqueId, $this->shoppingCartData);
+        session()->put('wr-laravel-shopping-cart-'.$this->uniqueId, $this->getShoppingCartDataWithoutModels());
 
         return true;
     }
