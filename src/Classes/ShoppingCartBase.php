@@ -128,9 +128,19 @@ abstract class ShoppingCartBase
      * 
      * @return array
      */
-    public function getShoppingCartItems(): array
+    public function getCartItems(): array
     {
         return $this->shoppingCartData;
+    }
+
+    /**
+     * Get cart item count
+     * 
+     * @return int
+     */
+    public function getCartItemsCount(): int
+    {
+        return count($this->shoppingCartData);
     }
 
     /**
