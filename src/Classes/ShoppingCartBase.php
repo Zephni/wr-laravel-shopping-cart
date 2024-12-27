@@ -109,6 +109,18 @@ abstract class ShoppingCartBase
     }
 
     /**
+     * Remove cart item by row index
+     * 
+     * @param int $rowIndex
+     * @return static
+     */
+    public function removeCartItem(int $rowIndex): void
+    {
+        unset($this->shoppingCartData[$rowIndex]);
+        $this->save();
+    }
+
+    /**
      * Remove cart item
      * 
      * @param Model $model
@@ -126,18 +138,6 @@ abstract class ShoppingCartBase
                 return;
             }
         }
-    }
-
-    /**
-     * Remove cart item by row index
-     * 
-     * @param int $rowIndex
-     * @return static
-     */
-    public function removeCartItem(int $rowIndex): void
-    {
-        unset($this->shoppingCartData[$rowIndex]);
-        $this->save();
     }
 
     /**

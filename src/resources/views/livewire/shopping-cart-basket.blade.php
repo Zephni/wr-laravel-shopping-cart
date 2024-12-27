@@ -18,24 +18,28 @@
         x-show="open"
         x-transition
         style="top: calc(100% + 4px);"
-        class="shopping-cart-basket-dropdown-menu z-30 absolute right-0 w-72 px-1 py-1 bg-white border border-slate-300 text-slate-600 shadow-lg rounded-md select-none"
+        class="shopping-cart-basket-dropdown-menu z-30 absolute right-0 w-96 px-1 py-1 bg-white border border-slate-300 text-slate-600 shadow-lg rounded-md select-none"
     >
         <div class="flex flex-col gap-1">
             {{-- Cart items --}}
             @forelse($shoppingCart->getCartItems() as $key => $cartItemData)
-                <div class="shopping-cart-basket-product flex justify-between items-center gap-2 px-1 py-1 bg-slate-100 border border-slate-200 rounded-md">
+                <div class="shopping-cart-basket-product flex justify-between items-center gap-2 px-1 py-1 bg-slate-50 border border-slate-200 rounded-md">
                     <img src="https://via.placeholder.com/64" alt="Product" class="w-16 h-16 border border-slate-300 rounded-md" />
-                    <div class="text-sm">
-                        <p>{{ $cartItemData['model']->getCartName($cartItemData['quantity'], $cartItemData['options']) }}</p>
-                        <p class="text-slate-400">Quantity: {{ $cartItemData['quantity'] }}</p>
-                        <p class="text-slate-400">Price: £{{ $cartItemData['model']->getCartPrice($cartItemData['quantity'], $cartItemData['options']) }}</p>
+                    <div class="w-full text-sm">
+                        <p>{!! $cartItemData['model']->getCartName($cartItemData['quantity'], $cartItemData['options']) !!}</p>
+                        <p class="text-slate-400">{!! $cartItemData['model']->renderDescription($cartItemData) !!}</p>
                     </div>
                     <button
                         wire:click="removeFromCart('{{ $key }}')"
-                        class="shopping-cart-basket-remove-item-btn text-slate-400 hover:text-primary-500"
+                        wire:loading.attr="disabled"
+                        class="shopping-cart-basket-remove-item-btn text-slate-400 hover:text-primary-500 px-3"
                     >
-                        <i wire:loading.remove class="fas fa-trash"></i>
-                        <i wire:loading class="fas fa-spinner fa-spin"></i>
+                        <i wire:loading.remove
+                            wire:target="removeFromCart('{{ $key }}')"
+                            class="fas fa-trash"></i>
+                        <i wire:loading
+                            wire:target="removeFromCart('{{ $key }}')"
+                            class="fas fa-spinner fa-spin"></i>
                     </button>
                 </div>
             @empty

@@ -1,6 +1,8 @@
 <?php
 namespace WebRegulate\LaravelShoppingCart\Classes\Traits;
 
+use Illuminate\Support\Facades\Blade;
+
 trait CartItem
 {
     /**
@@ -29,6 +31,23 @@ trait CartItem
      * @return float
      */
     public abstract function getCartPrice(float $quantity, ?array $options = null): float;
+
+    /**
+     * Render description
+     * 
+     * @param array $cartItemData
+     * @return string
+     */
+    public function renderDescription(array $cartItemData): string
+    {
+        return Blade::render(<<<BLADE
+            Quantity: {{ \$quantity }}<br />
+            Price: {{ \$price }}
+        BLADE, [
+            'quantity' => $cartItemData['quantity'],
+            'price' => '£'.$cartItemData['model']->getCartPrice($cartItemData['quantity'], $cartItemData['options']),
+        ]);
+    }
 
     /**
      * Build cart item data
