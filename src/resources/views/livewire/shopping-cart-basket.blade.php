@@ -24,15 +24,15 @@
             {{-- Cart items --}}
             @forelse($shoppingCart->getCartItems() as $key => $cartItemData)
                 <div class="shopping-cart-basket-product flex justify-between items-center gap-2 px-1 py-1 bg-slate-50 border border-slate-200 rounded-md">
-                    <img src="https://via.placeholder.com/64" alt="Product" class="w-16 h-16 border border-slate-300 rounded-md" />
+                    <img src="{{ $cartItemData['model']->getCartImage($cartItemData['quantity'], $cartItemData['options']) }}" alt="Product" class="shopping-cart-basket-image w-16 h-16 border border-slate-300 rounded-md" />
                     <div class="w-full text-sm">
-                        <p>{!! $cartItemData['model']->getCartName($cartItemData['quantity'], $cartItemData['options']) !!}</p>
-                        <p class="text-slate-400">{!! $cartItemData['model']->renderDescription($cartItemData) !!}</p>
+                        <p class="font-medium">{!! $cartItemData['model']->getCartName($cartItemData['quantity'], $cartItemData['options']) !!}</p>
+                        <p class="text-slate-500">{!! $cartItemData['model']->renderDescription($cartItemData) !!}</p>
                     </div>
                     <button
                         wire:click="removeFromCart('{{ $key }}')"
                         wire:loading.attr="disabled"
-                        class="shopping-cart-basket-remove-item-btn text-slate-400 hover:text-primary-500 px-3"
+                        class="shopping-cart-basket-remove-item-btn text-slate-400 hover:text-primary-500 px-2"
                     >
                         <i wire:loading.remove
                             wire:target="removeFromCart('{{ $key }}')"
@@ -46,12 +46,20 @@
                 <div class="text-center text-slate-400 py-2">
                     <i class="fas fa-shopping-cart text-md pr-2"></i>
                     <span>No items in cart</span>
-                    {{-- 
-                        <p>{{ json_encode(config('wr-laravel-shopping-cart.uniqueSessionIdKeyName')) }}</p>
-                        <p>{{ json_encode(session()->get('wr-laravel-shopping-cart-'.config('wr-laravel-shopping-cart.uniqueSessionIdKeyName'), [])) }}</p>
-                    --}}
                 </div>
             @endforelse
+
+            <button class="bg-primary-500 hover:bg-primary-600 text-white inline-flex justify-center gap-2 items-center text-white px-3 py-1.5 rounded-md shadow-md">
+                <i wire:loading.remove class="fas fa-check align-middle"></i>
+                <i wire:loading class="fas fa-spinner fa-spin align-middle"></i>
+                <span>Checkout</span>
+            </button>
+            
+            {{-- Debug --}}
+            {{-- <div class="w-full overflow-x-auto">
+                <p>{{ json_encode(config('wr-laravel-shopping-cart.uniqueSessionIdKeyName')) }}</p>
+                <p>{{ json_encode(app('WRLaravelShoppingCart')->getShoppingCartDataWithoutModels()) }}</p>
+            </div> --}}
         </div>
     </div>
 </div>

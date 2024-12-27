@@ -15,15 +15,6 @@ trait CartItem
     public abstract function getCartName(float $quantity, array $options): string;
 
     /**
-     * Get the options to display in the cart for this item
-     * 
-     * @param float $quantity
-     * @param array $options
-     * @return array
-     */
-    public abstract function getCartOptions(float $quantity, array $options): string;
-
-    /**
      * Get the price to display in the cart for this item
      * 
      * @param float $quantity
@@ -31,6 +22,29 @@ trait CartItem
      * @return float
      */
     public abstract function getCartPrice(float $quantity, ?array $options = null): float;
+
+    /**
+     * Get cart price formatted
+     * 
+     * @param float $quantity
+     * @param array $options
+     */
+    public function getCartPriceFormatted(float $quantity, array $options): string
+    {
+        return '£'.number_format($this->getCartPrice($quantity, $options), 2);
+    }
+
+    /**
+     * Get the image src to display in the cart for this item
+     * 
+     * @param float $quantity
+     * @param array $options
+     * @return string
+     */
+    public function getCartImage(float $quantity, array $options): string
+    {
+        return 'https://via.placeholder.com/64';
+    }
 
     /**
      * Render description
