@@ -22,7 +22,10 @@
     >
         <div class="flex flex-col gap-1">
             {{-- Cart items --}}
-            @forelse($shoppingCart->getCartItems() as $key => $cartItemData)
+            @php
+                $cartItems = $shoppingCart->getCartItems();
+            @endphp
+            @forelse($cartItems as $key => $cartItemData)
                 <div class="shopping-cart-basket-product flex justify-between items-center gap-2 px-1 py-1 bg-slate-50 border border-slate-200 rounded-md">
                     <img src="{{ $cartItemData['model']->getCartImage($cartItemData['quantity'], $cartItemData['options']) }}" alt="Product" class="shopping-cart-basket-image w-16 h-16 border border-slate-300 rounded-md" />
                     <div class="w-full text-sm">
@@ -43,14 +46,23 @@
                     </button>
                 </div>
             @empty
-                <div class="text-center text-slate-400 py-2">
+                <div class="text-center text-slate-600 py-2">
                     <i class="fas fa-shopping-cart text-md pr-2"></i>
                     <span>No items in cart</span>
                 </div>
             @endforelse
 
-            <button class="bg-primary-500 hover:bg-primary-600 text-white inline-flex justify-center gap-2 items-center text-white px-3 py-1.5 rounded-md shadow-md">
-                <i wire:loading.remove class="fas fa-check align-middle"></i>
+            <button
+                @if(!empty($cartItems))
+                    class="bg-primary-500 hover:bg-primary-600 text-white inline-flex justify-center gap-2 items-center text-white px-3 py-1.5 rounded-md shadow-md"
+                @else
+                    disabled="disabled"
+                    class="bg-slate-500 text-white inline-flex justify-center gap-2 items-center text-white px-3 py-1.5 rounded-md shadow-md select-none"
+                    title="Add items to your cart first"
+                    style="filter: opacity(0.3)"
+                @endif
+            >
+                <i wire:loading.remove class="fas fa-shopping-cart align-middle"></i>
                 <i wire:loading class="fas fa-spinner fa-spin align-middle"></i>
                 <span>Checkout</span>
             </button>
