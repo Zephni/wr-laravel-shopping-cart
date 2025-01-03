@@ -4,8 +4,9 @@
     @mouseleave="timer = setTimeout(() => open = false, 300)"
     class="wr-laravel-shopping-cart shopping-cart-basket relative"
 >
-    <div class="group relative flex items-center h-full content-center px-4 transition-colors">
+    <div class="group relative group flex items-center gap-2 h-full content-center px-4 text-slate-500 transition-colors select-none transition-colors">
         <i class="shopping-cart-basket-icon fas fa-shopping-cart text-xl  text-slate-500 group-hover:text-primary-500"></i>
+        <span>Cart</span>
         @if($shoppingCart->getCartItemsCount() > 0)
             <div class="absolute flex justify-center items-center -bottom-2 left-2 w-5 h-5 text-sm bg-primary-600 text-white rounded-full opacity-80 scale-90">
                 <span class="relative top-[-1px]">{{ $shoppingCart->getCartItemsCount() }}</span>
@@ -37,12 +38,8 @@
                         wire:loading.attr="disabled"
                         class="shopping-cart-basket-remove-item-btn text-slate-400 hover:text-primary-500 px-2"
                     >
-                        <i wire:loading.remove
-                            wire:target="removeFromCart('{{ $key }}')"
-                            class="fas fa-trash"></i>
-                        <i wire:loading
-                            wire:target="removeFromCart('{{ $key }}')"
-                            class="fas fa-spinner fa-spin"></i>
+                        <i wire:loading.remove wire:target="removeFromCart('{{ $key }}')" class="fas fa-trash"></i>
+                        <i wire:loading wire:target="removeFromCart('{{ $key }}')" class="fas fa-spinner fa-spin"></i>
                     </button>
                 </div>
             @empty
