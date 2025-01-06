@@ -11,6 +11,13 @@ use Illuminate\Database\Eloquent\Model;
 class ShoppingCartBasket extends Component
 {
     /**
+     * Theme
+     * 
+     * @var string
+     */
+    public string $theme;
+
+    /**
      * @var array Listeners for Livewire events
      */
     public $listeners = [
@@ -45,6 +52,17 @@ class ShoppingCartBasket extends Component
     {
         app('WRLaravelShoppingCart')->removeCartItem($rowIndex);
         $this->render();
+    }
+
+    /**
+     * Mount the component.
+     * 
+     * @param string $theme
+     * @return void
+     */
+    public function mount(string $theme = 'light')
+    {
+        $this->theme = $theme;
     }
 
     /**

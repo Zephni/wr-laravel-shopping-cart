@@ -1,12 +1,16 @@
+@props([
+    'theme' => 'light', // 'dark', 'light'
+])
+
 <div
+    class="wr-laravel-shopping-cart shopping-cart-basket relative {{ $theme === 'dark' ? 'text-slate-50 hover:text-white' : '!text-slate-500 hover:!text-slate-600' }}"
     x-data="{ open: false, timer: null }"
     @mouseenter="clearTimeout(timer); open = true"
     @mouseleave="timer = setTimeout(() => open = false, 300)"
-    class="wr-laravel-shopping-cart shopping-cart-basket relative"
 >
-    <div class="group relative group flex items-center gap-2 h-full content-center px-4 text-slate-500 transition-colors select-none transition-colors">
-        <i class="shopping-cart-basket-icon fas fa-shopping-cart text-xl  text-slate-500 group-hover:text-primary-500"></i>
-        <span>Cart</span>
+    <div class="group relative group flex items-center gap-2 h-full content-center px-4 transition-colors select-none transition-colors">
+        <i class="shopping-cart-basket-icon fas fa-shopping-cart text-base {{ $theme === 'dark' ? '' : 'group-hover:text-primary-500' }}"></i>
+        <span class="text-base font-normal {{ $theme === 'dark' ? '' : 'group-hover:text-primary-500' }}">Cart</span>
         @if($shoppingCart->getCartItemsCount() > 0)
             <div class="absolute flex justify-center items-center -bottom-2 left-2 w-5 h-5 text-sm bg-primary-600 text-white rounded-full opacity-80 scale-90">
                 <span class="relative top-[-1px]">{{ $shoppingCart->getCartItemsCount() }}</span>
