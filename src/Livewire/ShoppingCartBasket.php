@@ -39,6 +39,7 @@ class ShoppingCartBasket extends Component
     {
         $model = $modelClass::find($modelId);
         app('WRLaravelShoppingCart')->addCartItem($model, $quantity, $options);
+        $this->dispatch('shoppingCartUpdated');
         $this->render();
     }
 
@@ -51,6 +52,7 @@ class ShoppingCartBasket extends Component
     public function removeFromCart(int $rowIndex)
     {
         app('WRLaravelShoppingCart')->removeCartItem($rowIndex);
+        $this->dispatch('shoppingCartUpdated');
         $this->render();
     }
 

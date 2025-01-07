@@ -9,13 +9,20 @@
     @mouseleave="timer = setTimeout(() => open = false, 300)"
 >
     <div class="group relative group flex items-center gap-2 h-full content-center px-4 transition-colors select-none transition-colors">
+        {{-- Icon and cart text --}}
         <i class="shopping-cart-basket-icon fas fa-shopping-cart text-base {{ $theme === 'dark' ? '' : 'group-hover:text-primary-500' }}"></i>
         <span class="text-base font-normal {{ $theme === 'dark' ? '' : 'group-hover:text-primary-500' }}">Cart</span>
+
+        {{-- Count badge --}}
         @if($shoppingCart->getCartItemsCount() > 0)
-            <div class="absolute flex justify-center items-center -bottom-1 left-1 bg-slate-50 rounded-full border-2 border-emerald-400" style="height: 18px;">
+            <div wire:loading.remove class="absolute flex justify-center items-center top-1/2 transform -translate-x-1/2 -translate-y-1/2 left-[2px] mt-[1px] bg-slate-50 rounded-full border-2 border-aqua-200 font-medium" style="height: 18px;">
                 <span class="relative top-[-1.3px] left-[-0px] !text-primary-500 !text-[12px] px-[5px]" style="line-height:  0px;">{{ $shoppingCart->getCartItemsCount() }}</span>
             </div>
         @endif
+        {{-- Loading spinner in same position as the count badge --}}
+        <div wire:loading class="absolute flex justify-center items-center top-1/2 transform -translate-x-1/2 -translate-y-1/2 left-1">
+            <i class="fas fa-spinner fa-spin text-xs text-white"></i>
+        </div>
     </div>
 
     {{-- Currentcart dropdown --}}
@@ -35,12 +42,12 @@
                     <img src="{{ $cartItemData['model']->getCartImage($cartItemData['quantity'], $cartItemData['options']) }}" alt="Product" class="shopping-cart-basket-image w-16 h-16 border border-slate-300 rounded-md" />
                     <div class="w-full text-sm">
                         <p class="font-medium">{!! $cartItemData['model']->getCartName($cartItemData['quantity'], $cartItemData['options']) !!}</p>
-                        <p class="text-slate-500">{!! $cartItemData['model']->renderDescription($cartItemData) !!}</p>
+                        <div class="text-slate-500">{!! $cartItemData['model']->renderDescription($cartItemData) !!}</div>
                     </div>
                     <button
                         wire:click="removeFromCart('{{ $key }}')"
                         wire:loading.attr="disabled"
-                        class="shopping-cart-basket-remove-item-btn text-slate-400 hover:text-primary-500 px-2"
+                        class="shopping-cart-basket-remove-item-btn text-slate-500 hover:text-primary-500 px-2"
                     >
                         <i wire:loading.remove wire:target="removeFromCart('{{ $key }}')" class="fas fa-trash"></i>
                         <i wire:loading wire:target="removeFromCart('{{ $key }}')" class="fas fa-spinner fa-spin"></i>
@@ -53,12 +60,19 @@
                 </div>
             @endforelse
 
-            <button
+            <a
+                @if(!empty(config('wr-laravel-shopping-cart.checkoutRoute')))
+                    @if(!empty($cartItems))
+                        href="{{ route('checkout') }}"
+                    @endif
+                @else
+                    onclick="alert('Checkout route (checkoutRoute) must be set in the wr-laravel-shopping-cart config file')"
+                @endif
                 @if(!empty($cartItems))
-                    class="bg-primary-500 hover:bg-primary-600 text-white inline-flex justify-center gap-2 items-center text-white px-3 py-1.5 rounded-md shadow-md"
+                    class="bg-primary-500 hover:bg-primary-600 text-white hover:text-white inline-flex justify-center gap-2 items-center px-3 py-1.5 rounded-md shadow-md"
                 @else
                     disabled="disabled"
-                    class="bg-slate-500 text-white inline-flex justify-center gap-2 items-center text-white px-3 py-1.5 rounded-md shadow-md select-none"
+                    class="bg-slate-500 text-white hover:text-white inline-flex justify-center gap-2 items-center px-3 py-1.5 rounded-md shadow-md select-none"
                     title="Add items to your cart first"
                     style="filter: opacity(0.3)"
                 @endif
@@ -66,7 +80,7 @@
                 <i wire:loading.remove class="fas fa-shopping-cart align-middle"></i>
                 <i wire:loading class="fas fa-spinner fa-spin align-middle"></i>
                 <span>Checkout</span>
-            </button>
+            </a>
             
             {{-- Debug --}}
             {{-- <div class="w-full overflow-x-auto">
