@@ -12,8 +12,8 @@
         <i class="shopping-cart-basket-icon fas fa-shopping-cart text-base {{ $theme === 'dark' ? '' : 'group-hover:text-primary-500' }}"></i>
         <span class="text-base font-normal {{ $theme === 'dark' ? '' : 'group-hover:text-primary-500' }}">Cart</span>
         @if($shoppingCart->getCartItemsCount() > 0)
-            <div class="absolute flex justify-center items-center -bottom-2 left-2 w-5 h-5 text-sm bg-primary-600 text-white rounded-full opacity-80 scale-90">
-                <span class="relative top-[-1px]">{{ $shoppingCart->getCartItemsCount() }}</span>
+            <div class="absolute flex justify-center items-center -bottom-1 left-1 bg-slate-50 rounded-full border-2 border-emerald-400" style="height: 18px;">
+                <span class="relative top-[-1.3px] left-[-0px] !text-primary-500 !text-[12px] px-[5px]" style="line-height:  0px;">{{ $shoppingCart->getCartItemsCount() }}</span>
             </div>
         @endif
     </div>
