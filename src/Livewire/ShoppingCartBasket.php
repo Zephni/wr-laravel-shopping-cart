@@ -21,7 +21,7 @@ class ShoppingCartBasket extends Component
      * @var array Listeners for Livewire events
      */
     public $listeners = [
-        'shoppingCartUpdated' => 'render',
+        'updateShoppingCart' => 'render', // This should be dispatched by anything that updates the shopping cart externally
         'addToCart' => 'addToCart',
         'removeFromCart' => 'removeFromCart',
     ];
