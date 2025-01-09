@@ -5,6 +5,10 @@
 <div
     class="wr-laravel-shopping-cart shopping-cart-basket relative {{ $theme === 'dark' ? 'text-slate-50 hover:text-white' : '!text-slate-500 hover:!text-slate-600' }}"
     x-data="{ open: false, timer: null }"
+    {{-- Check if session of query string has product-added-success --}}
+    @if(session('product-added-success') ?? null || request()->query('product-added-success') ?? null == 1)
+        x-init="open = true"
+    @endif
     @mouseenter="clearTimeout(timer); open = true"
     @mouseleave="timer = setTimeout(() => open = false, 300)"
 >
@@ -37,28 +41,44 @@
             @php
                 $cartItems = $shoppingCart->getCartItems();
             @endphp
-            @forelse($cartItems as $key => $cartItemData)
-                <div class="shopping-cart-basket-product flex justify-between items-center gap-2 px-1 py-1 bg-slate-50 border border-slate-200 rounded-md">
-                    <img src="{{ $cartItemData['model']->getCartImage($cartItemData['quantity'], $cartItemData['options']) }}" alt="Product" class="shopping-cart-basket-image w-16 h-16 border border-slate-300 rounded-md" />
-                    <div class="w-full text-sm">
-                        <p class="font-medium">{!! $cartItemData['model']->getCartName($cartItemData['quantity'], $cartItemData['options']) !!}</p>
-                        <div class="text-slate-500">{!! $cartItemData['model']->renderDescription($cartItemData) !!}</div>
+
+            {{-- Clear cart (if not empty) --}}
+            @if(count($cartItems) > 0)
+                <p
+                    wire:click="removeAllCartItems"
+                    wire:loading.attr="disabled"
+                    class="text-slate-500 hover:text-primary-500 px-2 py-1 text-sm text-right"
+                >
+                    <i wire:loading.remove wire:target="removeAllCartItems" class="fas fa-trash-alt"></i>
+                    <i wire:loading wire:target="removeAllCartItems" class="fas fa-spinner fa-spin"></i>
+                    <span>Clear cart</span>
+                </p>
+            @endif
+
+            <div class="w-full flex flex-col gap-1 overflow-y-auto" style="max-height: 13rem;">
+                @forelse($cartItems as $key => $cartItemData)
+                    <div class="shopping-cart-basket-product flex justify-between items-center gap-2 px-1 py-1 bg-slate-50 border border-slate-200 rounded-md">
+                        <img src="{{ $cartItemData['model']->getCartImage($cartItemData['quantity'], $cartItemData['options']) }}" alt="Product" class="shopping-cart-basket-image w-16 h-16 border border-slate-300 rounded-md" />
+                        <div class="w-full text-sm">
+                            <p class="font-medium">{!! $cartItemData['model']->getCartName($cartItemData['quantity'], $cartItemData['options']) !!}</p>
+                            <div class="text-slate-500">{!! $cartItemData['model']->renderDescription($cartItemData) !!}</div>
+                        </div>
+                        <button
+                            wire:click="removeFromCart('{{ $key }}')"
+                            wire:loading.attr="disabled"
+                            class="shopping-cart-basket-remove-item-btn text-slate-500 hover:text-primary-500 px-2"
+                        >
+                            <i wire:loading.remove wire:target="removeFromCart('{{ $key }}')" class="fas fa-trash"></i>
+                            <i wire:loading wire:target="removeFromCart('{{ $key }}')" class="fas fa-spinner fa-spin"></i>
+                        </button>
                     </div>
-                    <button
-                        wire:click="removeFromCart('{{ $key }}')"
-                        wire:loading.attr="disabled"
-                        class="shopping-cart-basket-remove-item-btn text-slate-500 hover:text-primary-500 px-2"
-                    >
-                        <i wire:loading.remove wire:target="removeFromCart('{{ $key }}')" class="fas fa-trash"></i>
-                        <i wire:loading wire:target="removeFromCart('{{ $key }}')" class="fas fa-spinner fa-spin"></i>
-                    </button>
-                </div>
-            @empty
-                <div class="text-center text-slate-600 py-2">
-                    <i class="fas fa-shopping-cart text-md pr-2"></i>
-                    <span>No items in cart</span>
-                </div>
-            @endforelse
+                @empty
+                    <div class="text-center text-slate-600 py-2">
+                        <i class="fas fa-shopping-cart text-md pr-2"></i>
+                        <span>No items in cart</span>
+                    </div>
+                @endforelse
+            </div>
 
             <a
                 @if(!empty(config('wr-laravel-shopping-cart.checkoutRoute')))

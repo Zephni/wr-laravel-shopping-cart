@@ -57,6 +57,18 @@ class ShoppingCartBasket extends Component
     }
 
     /**
+     * Clear cart.
+     * 
+     * @return void
+     */
+    public function removeAllCartItems()
+    {
+        app('WRLaravelShoppingCart')->removeAllCartItems();
+        $this->dispatch('shoppingCartUpdated');
+        $this->render();
+    }
+
+    /**
      * Mount the component.
      * 
      * @param string $theme

@@ -121,6 +121,17 @@ abstract class ShoppingCartBase
     }
 
     /**
+     * Remove all cart items
+     * 
+     * @return static
+     */
+    public function removeAllCartItems(): void
+    {
+        $this->shoppingCartData = [];
+        $this->save();
+    }
+
+    /**
      * Remove cart item
      * 
      * @param Model $model
