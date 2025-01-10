@@ -19,7 +19,7 @@
 
         {{-- Count badge --}}
         @if($shoppingCart->getCartItemsCount() > 0)
-            <div wire:loading.remove class="absolute flex justify-center items-center top-1/2 transform -translate-x-1/2 -translate-y-1/2 left-[2px] mt-[1px] bg-slate-50 rounded-full border-2 border-aqua-200 font-medium" style="height: 18px;">
+            <div wire:loading.remove class="absolute flex justify-center items-center top-1/2 transform -translate-x-1/2 -translate-y-1/2 left-[2px] bg-slate-50 rounded-full border-2 border-aqua-200 font-medium" style="height: 18px; scale: 0.9;">
                 <span class="relative top-[-1.3px] left-[-0px] !text-primary-500 !text-[12px] px-[5px]" style="line-height:  0px;">{{ $shoppingCart->getCartItemsCount() }}</span>
             </div>
         @endif
@@ -45,11 +45,13 @@
             <div class="w-full flex flex-col gap-1 overflow-y-auto" style="max-height: 13rem;">
                 @forelse($cartItems as $key => $cartItemData)
                     <div class="shopping-cart-basket-product flex justify-between items-center gap-2 px-1 py-1 bg-slate-50 border border-slate-200 rounded-md">
-                        <img src="{{ $cartItemData['model']->getCartImage($cartItemData['quantity'], $cartItemData['options']) }}" alt="Product" class="shopping-cart-basket-image w-16 h-16 border border-slate-300 rounded-md" />
-                        <div class="w-full text-sm">
+                        <a href="{{ $cartItemData['model']->getCartLink() ?? '#' }}" class="aspect-square w-[128px] h-full flex items-center justify-center">
+                            <img src="{{ $cartItemData['model']->getCartImage($cartItemData['quantity'], $cartItemData['options']) }}" alt="Product" class="shopping-cart-basket-image w-16 h-16 border border-slate-300 rounded-md" />
+                        </a>
+                        <a href="{{ $cartItemData['model']->getCartLink() ?? '#' }}" class="w-full text-sm">
                             <p class="font-medium">{!! $cartItemData['model']->getCartName($cartItemData['quantity'], $cartItemData['options']) !!}</p>
                             <div class="text-slate-500">{!! $cartItemData['model']->renderDescription($cartItemData) !!}</div>
-                        </div>
+                        </a>
                         <button
                             wire:click="removeFromCart('{{ $key }}')"
                             wire:loading.attr="disabled"
