@@ -80,7 +80,11 @@
                 </button>
             @endif
 
-            <a
+            <button
+                wire.loading.attr="disabled"
+                wire.loading.class="!bg-slate-500 !cursor-default"
+                wire.loading.class.remove="bg-primary-500 hover:bg-primary-600"
+
                 @if(!empty(config('wr-laravel-shopping-cart.checkoutRoute')))
                     @if(!empty($cartItems))
                         href="{{ route('checkout') }}"
@@ -91,16 +95,14 @@
                 @if(!empty($cartItems))
                     class="bg-primary-500 hover:bg-primary-600 text-white hover:text-white inline-flex justify-center gap-2 items-center px-3 py-1.5 rounded-md shadow-md"
                 @else
-                    disabled="disabled"
+                    disabled
                     class="bg-slate-500 text-white hover:text-white inline-flex justify-center gap-2 items-center px-3 py-1.5 rounded-md shadow-md select-none"
                     title="Add items to your cart first"
                     style="filter: opacity(0.3)"
                 @endif
             >
-                <i wire:loading.remove class="fas fa-shopping-cart align-middle"></i>
-                <i wire:loading class="fas fa-spinner fa-spin align-middle"></i>
                 <span>Checkout</span>
-            </a>
+            </button>
             
             {{-- Debug --}}
             {{-- <div class="w-full overflow-x-auto">
