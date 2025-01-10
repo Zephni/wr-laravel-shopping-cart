@@ -34,7 +34,7 @@
         x-show="open"
         x-transition
         style="top: calc(100% + 4px);"
-        class="shopping-cart-basket-dropdown-menu z-30 absolute right-0 w-96 px-1 py-1 bg-white border border-slate-300 text-slate-600 shadow-lg rounded-md select-none"
+        class="shopping-cart-basket-dropdown-menu z-[1002] absolute right-0 w-96 px-1 py-1 bg-white border border-slate-300 text-slate-600 shadow-lg rounded-md select-none"
     >
         <div class="flex flex-col gap-1">
             {{-- Cart items --}}
