@@ -80,7 +80,7 @@
                 </button>
             @endif
 
-            <button
+            <a
                 wire.loading.attr="disabled"
                 wire.loading.class="!bg-slate-500 !cursor-default"
                 wire.loading.class.remove="bg-primary-500 hover:bg-primary-600"
@@ -94,6 +94,7 @@
                 @endif
                 @if(!empty($cartItems))
                     class="bg-primary-500 hover:bg-primary-600 text-white hover:text-white inline-flex justify-center gap-2 items-center px-3 py-1.5 rounded-md shadow-md"
+                    x-on:click="$el.disabled = true"
                 @else
                     disabled
                     class="bg-slate-500 text-white hover:text-white inline-flex justify-center gap-2 items-center px-3 py-1.5 rounded-md shadow-md select-none"
@@ -101,8 +102,9 @@
                     style="filter: opacity(0.3)"
                 @endif
             >
+                <i class="fas fa-shopping-cart text-sm"></i>
                 <span>Checkout</span>
-            </button>
+            </a>
             
             {{-- Debug --}}
             {{-- <div class="w-full overflow-x-auto">

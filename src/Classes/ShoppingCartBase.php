@@ -172,6 +172,21 @@ abstract class ShoppingCartBase
     }
 
     /**
+     * Get total price of all cart items
+     * 
+     * @return float
+     */
+    public function getCartTotalPrice(): float
+    {
+        $totalPrice = 0;
+        foreach ($this->shoppingCartData as $item) {
+            $totalPrice += $item['model']->getCartPrice($item['quantity'], $item['options']);
+        }
+
+        return $totalPrice;
+    }
+
+    /**
      * Get shopping cart data array without model instances
      * 
      * @return array
