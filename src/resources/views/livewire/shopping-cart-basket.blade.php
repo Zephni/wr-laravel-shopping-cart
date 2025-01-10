@@ -42,19 +42,6 @@
                 $cartItems = $shoppingCart->getCartItems();
             @endphp
 
-            {{-- Clear cart (if not empty) --}}
-            @if(count($cartItems) > 0)
-                <p
-                    wire:click="removeAllCartItems"
-                    wire:loading.attr="disabled"
-                    class="text-slate-500 hover:text-primary-500 px-2 py-1 text-sm text-right"
-                >
-                    <i wire:loading.remove wire:target="removeAllCartItems" class="fas fa-trash-alt"></i>
-                    <i wire:loading wire:target="removeAllCartItems" class="fas fa-spinner fa-spin"></i>
-                    <span>Clear cart</span>
-                </p>
-            @endif
-
             <div class="w-full flex flex-col gap-1 overflow-y-auto" style="max-height: 13rem;">
                 @forelse($cartItems as $key => $cartItemData)
                     <div class="shopping-cart-basket-product flex justify-between items-center gap-2 px-1 py-1 bg-slate-50 border border-slate-200 rounded-md">
@@ -79,6 +66,19 @@
                     </div>
                 @endforelse
             </div>
+
+            {{-- Clear cart (if not empty) --}}
+            @if(count($cartItems) > 0)
+                <button
+                    wire:click="removeAllCartItems"
+                    wire:loading.attr="disabled"
+                    class="text-slate-500 hover:text-primary-500 px-2 pb-1 text-sm text-right cursor-pointer"
+                >
+                    <i wire:loading.remove wire:target="removeAllCartItems" class="fas fa-trash-alt"></i>
+                    <i wire:loading wire:target="removeAllCartItems" class="fas fa-spinner fa-spin"></i>
+                    <span>Clear cart</span>
+                </button>
+            @endif
 
             <a
                 @if(!empty(config('wr-laravel-shopping-cart.checkoutRoute')))
