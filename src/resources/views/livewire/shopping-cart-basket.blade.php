@@ -33,8 +33,11 @@
     <div
         x-show="open"
         x-transition
-        style="top: calc(100% + 4px);"
-        class="shopping-cart-basket-dropdown-menu z-[1002] absolute right-0 w-96 px-1 py-1 bg-white border border-slate-300 text-slate-600 shadow-lg rounded-md select-none"
+        class="shopping-cart-basket-dropdown-menu z-[1002]
+            fixed left-0 right-auto w-full top-[36px]
+            md:absolute md:top-[28px] md:w-96 md:left-auto md:right-0
+            px-1 py-1 bg-white border border-slate-300 text-slate-600 shadow-lg rounded-md select-none"
+        {{-- class="shopping-cart-basket-dropdown-menu z-[1002] absolute right-0 w-96 px-1 py-1 bg-white border border-slate-300 text-slate-600 shadow-lg rounded-md select-none" --}}
     >
         <div class="flex flex-col gap-1">
             {{-- Cart items --}}
@@ -107,7 +110,7 @@
                 <i class="fas fa-shopping-cart text-sm"></i>
                 <span>Checkout</span>
             </a>
-            
+
             {{-- Debug --}}
             {{-- <div class="w-full overflow-x-auto">
                 <p>{{ json_encode(config('wr-laravel-shopping-cart.uniqueSessionIdKeyName')) }}</p>
