@@ -5,6 +5,7 @@
 <div
     class="wr-laravel-shopping-cart shopping-cart-basket relative {{ $theme === 'dark' ? 'text-slate-50 hover:text-white' : '!text-slate-500 hover:!text-slate-600' }}"
     x-data="{ open: false, timer: null }"
+    x-cloak
     {{-- Check if session of query string has product-added-success --}}
     @if(session('product-added-success') ?? null || request()->query('product-added-success') ?? null == 1)
         x-init="open = true"
