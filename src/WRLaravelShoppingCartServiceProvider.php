@@ -55,7 +55,7 @@ class WRLaravelShoppingCartServiceProvider extends ServiceProvider
         $this->provideBladeDirectives();
 
         // Post boot calls
-        $this->app->booted(function () {
+        $this->app->booted(function (): void {
             $this->postBootCalls();
         });
     }
@@ -97,7 +97,7 @@ class WRLaravelShoppingCartServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
 
         // Load routes
-        Route::middleware('web')->group(function () {
+        Route::middleware('web')->group(function (): void {
             $this->loadRoutesFrom(__DIR__ . '/routes/wr-laravel-shopping-cart-routes.php');
         });
 
