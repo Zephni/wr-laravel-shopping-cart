@@ -13,7 +13,7 @@
     @mouseenter="clearTimeout(timer); open = true"
     @mouseleave="timer = setTimeout(() => open = false, 300)"
 >
-    <div class="group relative group flex items-center gap-2 h-full content-center px-4 transition-colors select-none transition-colors">
+    <div class="group relative group flex items-center gap-2 h-full content-center transition-colors select-none transition-colors">
         {{-- Icon and cart text --}}
         <i class="shopping-cart-basket-icon fas fa-shopping-cart text-base {{ $theme === 'dark' ? '' : 'group-hover:text-primary-500' }}"></i>
         <span class="text-base font-normal {{ $theme === 'dark' ? '' : 'group-hover:text-primary-500' }}">Cart</span>
