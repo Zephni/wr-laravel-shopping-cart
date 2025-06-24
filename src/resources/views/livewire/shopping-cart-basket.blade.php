@@ -15,13 +15,13 @@
 >
     <div class="group relative group flex items-center gap-2 h-full content-center transition-colors select-none">
         {{-- Icon and cart text --}}
-        <i class="shopping-cart-basket-icon fas fa-shopping-cart text-base {{ $theme === 'dark' ? '' : 'group-hover:text-primary-500' }}"></i>
-        <span class="text-base font-normal {{ $theme === 'dark' ? '' : 'group-hover:text-primary-500' }}">Cart</span>
+        <i class="shopping-cart-basket-icon fas fa-shopping-cart text-base {{ $theme === 'dark' ? '' : 'group-hover:text-sky-500' }}"></i>
+        <span class="text-base font-normal {{ $theme === 'dark' ? '' : 'group-hover:text-sky-500' }}">Cart</span>
 
         {{-- Count badge --}}
         @if($shoppingCart->getCartItemsCount() > 0)
             <div wire:loading.remove class="absolute flex justify-center items-center top-1/2 transform -translate-x-1/2 -translate-y-1/2 left-[2px] bg-slate-50 rounded-full border-2 border-aqua-200 font-medium" style="height: 18px; scale: 0.9;">
-                <span class="relative top-[-1.3px] left-[-0px] !text-primary-500 !text-[12px] px-[5px]" style="line-height:  0px;">{{ $shoppingCart->getCartItemsCount() }}</span>
+                <span class="relative top-[-1.3px] left-[-0px] !text-sky-500 !text-[12px] px-[5px]" style="line-height:  0px;">{{ $shoppingCart->getCartItemsCount() }}</span>
             </div>
         @endif
         {{-- Loading spinner in same position as the count badge --}}
@@ -59,7 +59,7 @@
                         <button
                             wire:click="removeFromCart('{{ $key }}')"
                             wire:loading.attr="disabled"
-                            class="shopping-cart-basket-remove-item-btn text-slate-500 hover:text-primary-500 px-2"
+                            class="shopping-cart-basket-remove-item-btn text-slate-500 hover:text-sky-500 px-2"
                         >
                             <i wire:loading.remove wire:target="removeFromCart('{{ $key }}')" class="fas fa-trash"></i>
                             <i wire:loading wire:target="removeFromCart('{{ $key }}')" class="fas fa-spinner fa-spin"></i>
@@ -78,7 +78,7 @@
                 <button
                     wire:click="removeAllCartItems"
                     wire:loading.attr="disabled"
-                    class="text-slate-500 hover:text-primary-500 px-2 pb-1 text-sm text-right cursor-pointer"
+                    class="text-slate-500 hover:text-sky-500 px-2 pb-1 text-sm text-right cursor-pointer"
                 >
                     <i wire:loading.remove wire:target="removeAllCartItems" class="fas fa-trash-alt"></i>
                     <i wire:loading wire:target="removeAllCartItems" class="fas fa-spinner fa-spin"></i>
@@ -89,7 +89,7 @@
             <a
                 wire.loading.attr="disabled"
                 wire.loading.class="!bg-slate-500 !cursor-default"
-                wire.loading.class.remove="bg-primary-500 hover:bg-primary-600"
+                wire.loading.class.remove="bg-sky-500 hover:bg-sky-600"
 
                 @if(!empty(config('wr-laravel-shopping-cart.checkoutRoute')))
                     @if(!empty($cartItems))
@@ -99,7 +99,7 @@
                     onclick="alert('Checkout route (checkoutRoute) must be set in the wr-laravel-shopping-cart config file')"
                 @endif
                 @if(!empty($cartItems))
-                    class="bg-primary-500 hover:bg-primary-600 text-white hover:text-white inline-flex justify-center gap-2 items-center px-3 py-1.5 rounded-md shadow-md"
+                    class="bg-sky-500 hover:bg-sky-600 text-white hover:text-white inline-flex justify-center gap-2 items-center px-3 py-1.5 rounded-md shadow-md"
                     x-on:click="$el.disabled = true"
                 @else
                     disabled

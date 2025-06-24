@@ -86,7 +86,9 @@ class ShoppingCartBasket extends Component
      */
     public function render()
     {
-        return view('wr-laravel-shopping-cart::livewire.shopping-cart-basket', [
+        $basketView = config('wr-laravel-shopping-cart.views.basket', 'wr-laravel-shopping-cart::shopping-cart-basket');
+
+        return view($basketView, [
             'shoppingCart' => app('WRLaravelShoppingCart')
         ]);
     }

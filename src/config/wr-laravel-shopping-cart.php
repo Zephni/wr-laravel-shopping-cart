@@ -7,4 +7,9 @@ return [
     // Checkout route name
     'checkoutRoute' => null,
     // 'checkoutRoute' => 'checkout',
+
+    // View for shopping cart basket
+    'views' => [
+        'basket' => 'wr-laravel-shopping-cart::shopping-cart-basket',
+    ],
 ];
