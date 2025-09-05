@@ -4,9 +4,8 @@ namespace WebRegulate\LaravelShoppingCart\Classes\Middleware;
 
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use WebRegulate\LaravelShoppingCart\Classes\ShoppingCartSession;
 use Closure;
-use WebRegulate\LaravelShoppingCart\Classes\ShoppingCartBase;
+use WebRegulate\LaravelShoppingCart\Classes\Drivers\ShoppingCartBase;
 
 class WRLaravelShoppingCartMiddleware
 {
@@ -20,8 +19,8 @@ class WRLaravelShoppingCartMiddleware
         // Register singleton for shopping cart
         app()->singleton('WRLaravelShoppingCart', function () {
             return once(function() {
-                $mode = ShoppingCartBase::getMode();
-                $class = config("wr-laravel-shopping-cart.handlers.{$mode}.class");
+                $driverAlias = ShoppingCartBase::getDriverAlias();
+                $class = config("wr-laravel-shopping-cart.drivers.{$driverAlias}.driver");
                 return new $class();
             });
         });

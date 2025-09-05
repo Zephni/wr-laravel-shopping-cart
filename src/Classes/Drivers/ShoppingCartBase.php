@@ -1,16 +1,11 @@
 <?php
-namespace WebRegulate\LaravelShoppingCart\Classes;
+namespace WebRegulate\LaravelShoppingCart\Classes\Drivers;
 
 use Illuminate\Database\Eloquent\Model;
 use WebRegulate\LaravelShoppingCart\Classes\Traits\CartItem;
 
 abstract class ShoppingCartBase
 {
-    /**
-     * Unique identifier for the shopping cart
-     */
-    protected string $uniqueId;
-
     /**
      * Shopping cart data. Note that each item in the cart MUST use this format (use the buildCartItemData method from the CartItem trait):
      * [
@@ -26,10 +21,9 @@ abstract class ShoppingCartBase
     /**
      * Constructor
      */
-    public function __construct(string $uniqueId)
+    public function __construct()
     {
-        // Set unique identifier and load shopping cart data
-        $this->uniqueId = $uniqueId;
+        // Load shopping cart data
         $this->load();
 
         // Loop through shopping cart data and set model instances
@@ -39,13 +33,13 @@ abstract class ShoppingCartBase
     }
 
     /**
-     * Get mode
+     * Get current driver name
      */
-    public static function getMode(): string
+    public static function getDriverAlias(): string
     {
-        return (is_callable(config('wr-laravel-shopping-cart.mode')))
-            ? call_user_func(config('wr-laravel-shopping-cart.mode'))
-            : config('wr-laravel-shopping-cart.mode', 'session');
+        return (is_callable(config('wr-laravel-shopping-cart.driver')))
+            ? call_user_func(config('wr-laravel-shopping-cart.driver'))
+            : config('wr-laravel-shopping-cart.driver');
     }
 
     /**
@@ -53,7 +47,7 @@ abstract class ShoppingCartBase
      */
     public function getHandlerConfig(): array
     {
-        return config('wr-laravel-shopping-cart.handlers.'.static::getMode().'.config', []);
+        return config('wr-laravel-shopping-cart.drivers.'.static::getDriverAlias().'.config', []);
     }
 
     /**

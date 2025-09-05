@@ -71,15 +71,10 @@ class WRLaravelShoppingCartServiceProvider extends ServiceProvider
             __DIR__ . '/config/wr-laravel-shopping-cart.php' => config_path('wr-laravel-shopping-cart.php'),
         ], 'wr-laravel-shopping-cart-config');
 
-        // Publish assets
+        // Publish migrations
         $this->publishes([
-            // Publish assets
-        ], 'wr-laravel-shopping-cart-assets');
-
-        // Publish models
-        $this->publishes([
-            __DIR__ . '/app/WRLA' => app_path('WRLA'),
-        ], 'wr-laravel-shopping-cart-models');
+            __DIR__ . '/database/migrations' => database_path('migrations'),
+        ], 'wr-shopping-cart-migrations');
     }
 
     /**
@@ -92,9 +87,6 @@ class WRLaravelShoppingCartServiceProvider extends ServiceProvider
         // $this->commands([
             
         // ]);
-
-        // Load migrations
-        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
 
         // Load routes
         Route::middleware('web')->group(function (): void {

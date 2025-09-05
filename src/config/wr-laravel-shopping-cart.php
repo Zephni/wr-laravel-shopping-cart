@@ -1,18 +1,32 @@
 <?php
 
+use WebRegulate\LaravelShoppingCart\Classes\Drivers\ShoppingCartSession;
+use WebRegulate\LaravelShoppingCart\Classes\Drivers\ShoppingCartDatabase;
+use WebRegulate\LaravelShoppingCart\Classes\Models\WrShoppingCart;
+
 return [
-    // Handlers configuration
-    'handlers' => [
+    // Drivers configuration
+    'drivers' => [
         'session' => [
-            'class' => \WebRegulate\LaravelShoppingCart\Classes\ShoppingCartSession::class,
+            'driver' => ShoppingCartSession::class,
             'config' => [
-                'session_container_alias' => 'wr-shopping-cart',
+                'session_prefix' => 'wr-shopping-cart',
             ]
         ],
-    ],    
+        // Database driver is a work in progress
+        // 'database' => [
+        //     'driver' => ShoppingCartDatabase::class,
+        //     'config' => [
+        //         'model' => WrShoppingCart::class,
+        //         'get_cart' => function() {
+        //             return WrShoppingCart::getCart(session()->getId(), auth()?->id());
+        //         },
+        //     ]
+        // ],
+    ],
 
-    // Mode
-    'mode' => fn() => 'session',
+    // Current driver
+    'driver' => fn() => 'session',
 
     // Checkout route name
     'checkoutRoute' => null,
