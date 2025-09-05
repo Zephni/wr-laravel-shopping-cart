@@ -4,19 +4,25 @@ namespace WebRegulate\LaravelShoppingCart\Classes;
 class ShoppingCartSession extends ShoppingCartBase
 {
     /**
+     * Session container alias, set from handler config
+     */
+    public string $sessionContainerAlias;
+
+    /**
      * Constructor
-     * 
-     * @return static
      */
     public function __construct()
     {
+        // Set session container alias from config
+        $this->sessionContainerAlias = $this->getHandlerConfig()['session_container_alias'];
+
         // Get the unique identifier from session
-        $uniqueId = session()->get(config('wr-laravel-shopping-cart.uniqueSessionIdKeyName'), null);
+        $uniqueId = session()->get("{$this->sessionContainerAlias}.unique_id", null);
 
         // If no unique identifier exists, create one
         if (empty($uniqueId)) {
             $uniqueId = uuid_create();
-            session()->put(config('wr-laravel-shopping-cart.uniqueSessionIdKeyName'), $uniqueId);
+            session()->put("{$this->sessionContainerAlias}.unique_id", $uniqueId);
         }
 
         // Call parent constructor
@@ -31,7 +37,7 @@ class ShoppingCartSession extends ShoppingCartBase
     public function save(): bool
     {
         // Store data in session
-        session()->put('wr-laravel-shopping-cart-'.$this->uniqueId, $this->getShoppingCartDataWithoutModels());
+        session()->put("{$this->sessionContainerAlias}.{$this->uniqueId}", $this->getShoppingCartDataWithoutModels());
 
         return true;
     }
@@ -44,6 +50,6 @@ class ShoppingCartSession extends ShoppingCartBase
     public function load(): void
     {
         // Load data from session
-        $this->shoppingCartData = session()->get('wr-laravel-shopping-cart-'.$this->uniqueId, []);
+        $this->shoppingCartData = session()->get("{$this->sessionContainerAlias}.{$this->uniqueId}", []);
     }
 }

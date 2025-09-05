@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use WebRegulate\LaravelShoppingCart\Classes\ShoppingCartSession;
 use Closure;
+use WebRegulate\LaravelShoppingCart\Classes\ShoppingCartBase;
 
 class WRLaravelShoppingCartMiddleware
 {
@@ -18,11 +19,11 @@ class WRLaravelShoppingCartMiddleware
     {
         // Register singleton for shopping cart
         app()->singleton('WRLaravelShoppingCart', function () {
-            // TODO, we need a way of defining these in config and potentially hot switching them based on conditions.
-            //   For example, switching from session to database mode if user logs in / out. Note that the data would need to be transferred between the two.
-            // Note that shopping cart session will automatically create a unique identifier for the session if it doesn't exist, it
-            //   will also load the data from the session if it exists
-            return new ShoppingCartSession();
+            return once(function() {
+                $mode = ShoppingCartBase::getMode();
+                $class = config("wr-laravel-shopping-cart.handlers.{$mode}.class");
+                return new $class();
+            });
         });
 
         return $next($request);

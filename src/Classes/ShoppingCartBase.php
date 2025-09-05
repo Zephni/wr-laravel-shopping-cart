@@ -8,8 +8,6 @@ abstract class ShoppingCartBase
 {
     /**
      * Unique identifier for the shopping cart
-     *
-     * @var string
      */
     protected string $uniqueId;
 
@@ -22,16 +20,11 @@ abstract class ShoppingCartBase
      *     'quantity' => 1, // The quantity of this item
      *     'options' => [] // The options of this item
      * ]...
-     *
-     * @var array
      */
     protected array $shoppingCartData = [];
 
     /**
      * Constructor
-     *
-     * @param string $uniqueId
-     * @return static
      */
     public function __construct(string $uniqueId)
     {
@@ -46,6 +39,24 @@ abstract class ShoppingCartBase
     }
 
     /**
+     * Get mode
+     */
+    public static function getMode(): string
+    {
+        return (is_callable(config('wr-laravel-shopping-cart.mode')))
+            ? call_user_func(config('wr-laravel-shopping-cart.mode'))
+            : config('wr-laravel-shopping-cart.mode', 'session');
+    }
+
+    /**
+     * Get handler config
+     */
+    public function getHandlerConfig(): array
+    {
+        return config('wr-laravel-shopping-cart.handlers.'.static::getMode().'.config', []);
+    }
+
+    /**
      * Saves current data to storage with $this->uniqueId
      *
      * @return bool True if successful, false otherwise
@@ -54,17 +65,11 @@ abstract class ShoppingCartBase
 
     /**
      * Retrieves the data from storage and promises to store in data property
-     *
-     * @return void
      */
     abstract public function load(): void;
 
     /**
      * Add cart item, adds new, or increments quantity and merges options if item already exists
-     *
-     * @param Model $model
-     * @param float $quantity
-     * @param array $options
      */
     public function addCartItem(Model $model, float $quantity = 1, array $options = []): void
     {
@@ -88,10 +93,6 @@ abstract class ShoppingCartBase
 
     /**
      * Set cart item, forcibly sets quantity and options of existing cart item
-     *
-     * @param Model $model
-     * @param float $quantity
-     * @param array $options
      */
     public function setCartItem(Model $model, float $quantity = 1, array $options = []): void
     {
@@ -110,9 +111,6 @@ abstract class ShoppingCartBase
 
     /**
      * Remove cart item by row index
-     *
-     * @param int $rowIndex
-     * @return static
      */
     public function removeCartItem(int $rowIndex): void
     {
@@ -122,8 +120,6 @@ abstract class ShoppingCartBase
 
     /**
      * Remove all cart items
-     *
-     * @return static
      */
     public function removeAllCartItems(): void
     {
@@ -133,9 +129,6 @@ abstract class ShoppingCartBase
 
     /**
      * Remove cart item
-     *
-     * @param Model $model
-     * @param array $options
      */
     public function removeCartItemByModelAndOptions(Model $model, array $options = []): void
     {
@@ -153,8 +146,6 @@ abstract class ShoppingCartBase
 
     /**
      * Get cart item models
-     *
-     * @return array
      */
     public function getCartItems(): array
     {
@@ -163,8 +154,6 @@ abstract class ShoppingCartBase
 
     /**
      * Get cart item count
-     *
-     * @return int
      */
     public function getCartItemsCount(): int
     {
@@ -173,8 +162,6 @@ abstract class ShoppingCartBase
 
     /**
      * Get total price of all cart items
-     *
-     * @return float
      */
     public function getCartTotalPrice(): float
     {
@@ -188,8 +175,6 @@ abstract class ShoppingCartBase
 
     /**
      * Get total price in lowest currency unit (e.g. pence) of all cart items
-     *
-     * @return int
      */
     public function getCartTotalPriceInLowestCurrencyUnit(): int
     {
@@ -198,8 +183,6 @@ abstract class ShoppingCartBase
 
     /**
      * Get shopping cart data array without model instances
-     *
-     * @return array
      */
     public function getShoppingCartDataWithoutModels(): array
     {
@@ -214,9 +197,6 @@ abstract class ShoppingCartBase
 
     /**
      * Throw exception if invalid cart item model
-     *
-     * @param Model $model
-     * @return void
      */
     private function throwExceptionIfInvalidCartItemModel(Model $model): void
     {

@@ -1,8 +1,18 @@
 <?php
 
 return [
-    // If using ShoppingCartSession, this is the key that will be used to store the unique identifier in the session
-    'uniqueSessionIdKeyName' => 'wrLaravelShoppingCartUniqueId',
+    // Handlers configuration
+    'handlers' => [
+        'session' => [
+            'class' => \WebRegulate\LaravelShoppingCart\Classes\ShoppingCartSession::class,
+            'config' => [
+                'session_container_alias' => 'wr-shopping-cart',
+            ]
+        ],
+    ],    
+
+    // Mode
+    'mode' => fn() => 'session',
 
     // Checkout route name
     'checkoutRoute' => null,
@@ -10,6 +20,6 @@ return [
 
     // View for shopping cart basket
     'views' => [
-        'basket' => 'wr-laravel-shopping-cart::shopping-cart-basket',
+        'basket' => 'livewire.wr-laravel-shopping-cart.shopping-cart-basket',
     ],
 ];
