@@ -40,8 +40,6 @@ class ShoppingCartSession extends ShoppingCartBase
 
     /**
      * Retrieves the data from storage and promises to store in data property
-     * 
-     * @return void
      */
     public function load(): void
     {

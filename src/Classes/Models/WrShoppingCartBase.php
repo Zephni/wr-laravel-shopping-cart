@@ -3,6 +3,7 @@
 namespace WebRegulate\LaravelShoppingCart\Classes\Models;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,24 +17,40 @@ class WrShoppingCartBase extends Model
      * @param int $defaultCookieDuration Duration in minutes for which the cookie should last if the default $uniqueId is true is used, this way it can be customized as needed.
      * @return static The created or retrieved shopping cart instance.
      */
-    public static function getCart(?string $uniqueIdPriority, bool|string $uniqueId = true, int $defaultCookieDuration = 60 * 24 * 30)
+    public static function getCart(?string $uniqueIdPriority, bool|string $uniqueIdFallback = true, int $defaultCookieDuration = 60 * 24 * 30)
     {
-        // If $uniqueId is true, use session ID
-        if ($uniqueId === true) {
-            // Set cookie if not already set
-            if (!request()->hasCookie('wrscl_browser_id')) {
-                $browserId = Str::uuid()->toString();
-                Cookie::queue('wrscl_browser_id', $browserId, $defaultCookieDuration); // 30 days
+        // Set cookie name
+        $cookieName = 'wrscl_browser_id';
+
+        // If uniqueIdFallback is true, use session/cookie ID logic, we need to do this to ensure we have a consistent ID
+        // ... across requests including livewire and login / logout requests.
+        if ($uniqueIdFallback === true) {
+            // Step 1: Check session first — it's always available immediately
+            $browserId = session($cookieName);
+
+            // Step 2: If not in session, check cookie (may be missing on first request)
+            if (!$browserId && request()->hasCookie($cookieName)) {
+                $browserId = request()->cookie($cookieName);
+                session()->put($cookieName, $browserId); // cache it for this request
             }
+
+            // Step 3: If still missing, generate and persist
+            if (!$browserId) {
+                $browserId = Str::uuid()->toString();
+                session()->put($cookieName, $browserId);
+                Cookie::queue(cookie($cookieName, $browserId, $defaultCookieDuration));
+            }
+
+            $uniqueIdFallback = $browserId;
         }
 
         // If uniqueIdPriority is provided, search by it
         if (!empty($uniqueIdPriority)) {
             $cart = static::where('unique_id_priority', $uniqueIdPriority)->first();
         }
-        // If uniqueIdPriority is not provided and uniqueId is not false, if uniqueId is true use session ID, else use provided uniqueId
-        elseif ($uniqueId !== false) {
-            $cart = static::where('unique_id_fallback', $uniqueId)->first();
+        // If uniqueIdPriority is not provided and uniqueIdFallback is not false, if uniqueIdFallback is true use session ID, else use provided uniqueIdFallback
+        elseif ($uniqueIdFallback !== false) {
+            $cart = static::where('unique_id_fallback', $uniqueIdFallback)->first();
         }
         // If neither is provided, no cart found
         else {
@@ -44,14 +61,10 @@ class WrShoppingCartBase extends Model
         if (!$cart) {
             $cart = static::create([
                 'unique_id_priority' => $uniqueIdPriority,
-                'unique_id_fallback' => $uniqueId,
+                'unique_id_fallback' => $uniqueIdFallback,
             ]);
         }
         // If cart exists but unique ID priority is provided and different, update it
-        // ... with both the priority and fallback IDs, this means the logged in user will
-        // ... always link session carts to user carts on login / registration
-        // ... or perhaps across devices for example, but we need to make sure to pass the
-        // ... priority id as soon as we have access to it within the get_cart closure
         elseif (!empty($uniqueIdPriority) && $cart->unique_id_priority !== $uniqueIdPriority) {
             $cart->update([
                 'unique_id_priority' => $uniqueIdPriority,
