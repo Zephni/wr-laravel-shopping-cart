@@ -19,22 +19,16 @@ class WrShoppingCartBase extends Model
      */
     public static function getCart(?string $uniqueIdPriority, bool|string $uniqueIdFallback = true, int $defaultCookieDuration = 60 * 24 * 30)
     {
-        // Set cookie name
         $cookieName = 'wrscl_browser_id';
 
-        // If uniqueIdFallback is true, use session/cookie ID logic, we need to do this to ensure we have a consistent ID
-        // ... across requests including livewire and login / logout requests.
         if ($uniqueIdFallback === true) {
-            // Step 1: Check session first — it's always available immediately
             $browserId = session($cookieName);
 
-            // Step 2: If not in session, check cookie (may be missing on first request)
             if (!$browserId && request()->hasCookie($cookieName)) {
                 $browserId = request()->cookie($cookieName);
-                session()->put($cookieName, $browserId); // cache it for this request
+                session()->put($cookieName, $browserId);
             }
 
-            // Step 3: If still missing, generate and persist
             if (!$browserId) {
                 $browserId = Str::uuid()->toString();
                 session()->put($cookieName, $browserId);
@@ -44,30 +38,28 @@ class WrShoppingCartBase extends Model
             $uniqueIdFallback = $browserId;
         }
 
-        // If uniqueIdPriority is provided, search by it
-        if (!empty($uniqueIdPriority)) {
-            $cart = static::where('unique_id_priority', $uniqueIdPriority)->first();
-        }
-        // If uniqueIdPriority is not provided and uniqueIdFallback is not false, if uniqueIdFallback is true use session ID, else use provided uniqueIdFallback
-        elseif ($uniqueIdFallback !== false) {
+        // Step 1: Try to find cart by priority ID
+        $cart = !empty($uniqueIdPriority)
+            ? static::where('unique_id_priority', $uniqueIdPriority)->first()
+            : null;
+
+        // Step 2: If no cart found, try fallback ID
+        if (!$cart && $uniqueIdFallback !== false) {
             $cart = static::where('unique_id_fallback', $uniqueIdFallback)->first();
-        }
-        // If neither is provided, no cart found
-        else {
-            $cart = null;
+
+            // ✅ If cart found via fallback and user is now logged in, assign ownership
+            if ($cart && !empty($uniqueIdPriority)) {
+                $cart->update([
+                    'unique_id_priority' => $uniqueIdPriority,
+                ]);
+            }
         }
 
-        // If cart does not exist, create it
+        // Step 3: If still no cart, create one
         if (!$cart) {
             $cart = static::create([
                 'unique_id_priority' => $uniqueIdPriority,
                 'unique_id_fallback' => $uniqueIdFallback,
-            ]);
-        }
-        // If cart exists but unique ID priority is provided and different, update it
-        elseif (!empty($uniqueIdPriority) && $cart->unique_id_priority !== $uniqueIdPriority) {
-            $cart->update([
-                'unique_id_priority' => $uniqueIdPriority,
             ]);
         }
 
