@@ -16,14 +16,14 @@ class WRLaravelShoppingCartMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Register singleton for shopping cart
-        app()->singleton('WRLaravelShoppingCart', function () {
-            return once(function() {
-                $driverAlias = ShoppingCartBase::getDriverAlias();
-                $class = config("wr-laravel-shopping-cart.drivers.{$driverAlias}.driver");
-                return new $class();
-            });
+        $wrShoppingCartInstance = once(function() {
+            $driverAlias = ShoppingCartBase::getDriverAlias();
+            $class = config("wr-laravel-shopping-cart.drivers.{$driverAlias}.driver");
+            return new $class();
         });
+
+        // Register singleton for shopping cart
+        app()->singleton('WRLaravelShoppingCart', fn() => $wrShoppingCartInstance);
 
         return $next($request);
     }

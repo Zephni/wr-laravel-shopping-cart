@@ -9,4 +9,11 @@ class WrShoppingCart extends WrShoppingCartBase
     use SoftDeletes;
 
     protected $table = 'wr_shopping_carts';
+    
+    protected $fillable = [
+        'unique_id_priority',
+        'unique_id_fallback',
+        'data',
+        'cart_data',
+    ];
 }
