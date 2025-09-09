@@ -1,6 +1,8 @@
 <?php
 namespace WebRegulate\LaravelShoppingCart\Classes\Drivers;
 
+use WebRegulate\LaravelShoppingCart\Classes\Models\WrShoppingCart;
+
 class ShoppingCartDatabase extends ShoppingCartBase
 {
     /**
@@ -128,6 +130,20 @@ class ShoppingCartDatabase extends ShoppingCartBase
         }
 
         return $cart;
+    }
+
+    /**
+     * Get shopping cart model instance
+     * 
+     * @param ?string Leave null to get from current session, or pass a unique ID to get specific cart
+     */
+    public function getCart(?string $uniqueId = null): mixed
+    {
+        if(is_null($uniqueId)) {
+            return WrShoppingCart::where('unique_id', $this->uniqueId)->first();
+        }
+
+        return WrShoppingCart::where('unique_id', $uniqueId)->first();
     }
 
     /**
