@@ -85,7 +85,7 @@ class ShoppingCartDatabase extends ShoppingCartBase
         }
 
         // Create cart if it doesn't exist with the given unique ID
-        $cart = $this->createCartIfNotExistsWithUniqueId($this->uniqueId);
+        $cart = $this->createOrUpdateCartWithUniqueId($this->uniqueId, false);
 
         // Load cart data from cart or fall back to empty array
         $this->shoppingCartData = json_decode($cart->cart_data ?? '[]', true) ?? [];
