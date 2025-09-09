@@ -119,8 +119,8 @@ class ShoppingCartDriverDatabase extends ShoppingCartDriverBase
         $model = $this->modelClass;
         $cart = $model::where('unique_id', $uniqueId)->first();
 
-        // If deleteIfEmpty is true and cart is empty, force delete and return null
-        if($deleteIfEmpty) {
+        // If cart exists and deleteIfEmpty is true and cart is empty, force delete and return null
+        if($cart && $deleteIfEmpty) {
             $cartData = json_decode($cart->cart_data ?? '[]', true) ?? [];
             if(empty($cartData) || (is_array($cartData) && count($cartData) === 0)) {
                 $cart->forceDelete();
