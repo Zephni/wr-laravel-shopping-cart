@@ -84,19 +84,34 @@ class ShoppingCartDatabase extends ShoppingCartBase
             return;
         }
 
+        // Create cart if it doesn't exist with the given unique ID
+        $cart = $this->createCartIfNotExistsWithUniqueId($this->uniqueId);
+
+        // Load cart data from cart or fall back to empty array
+        $this->shoppingCartData = json_decode($cart->cart_data ?? '[]', true) ?? [];
+    }
+
+    /**
+     * Create cart if it doesn't exist with the given unique ID. Note that this is public
+     * because we may need to call this early in some cases (e.g. checkout verify email step)
+     * 
+     * @return $cart Shopping cart instance or null
+     */
+    public function createCartIfNotExistsWithUniqueId(string $uniqueId): mixed
+    {
         // If unique ID is set, load from database
         $model = $this->modelClass;
-        $cart = $model::where('unique_id', $this->uniqueId)->first();
+        $cart = $model::where('unique_id', $uniqueId)->first();
 
         // If cart doesn't exist, create it from session data
         if (!$cart) {
             // Create new cart record with session data
             $cart = $model::create([
-                'unique_id' => $this->uniqueId,
+                'unique_id' => $uniqueId,
                 'cart_data' => json_encode(session()->get("{$this->sessionPrefix}.cart_data", [])),
             ]);
         }
 
-        $this->shoppingCartData = json_decode($cart->cart_data ?? '[]', true) ?? [];
+        return $cart;
     }
 }
