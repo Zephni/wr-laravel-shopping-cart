@@ -92,12 +92,14 @@ class ShoppingCartDatabase extends ShoppingCartBase
     }
 
     /**
-     * Create cart if it doesn't exist with the given unique ID. Note that this is public
-     * because we may need to call this early in some cases (e.g. checkout verify email step)
+     * Create or update cart with unique ID, this method is public because we may need to call this
+     * during our checkout / register progress early in the case where a user has not yet logged in
+     * but needs the cart to be associated with their account - perhaps if they verify their email
+     * on a different device.
      * 
      * @return $cart Shopping cart instance or null
      */
-    public function createCartIfNotExistsWithUniqueId(string $uniqueId): mixed
+    public function createOrUpdateCartWithUniqueId(string $uniqueId, bool $allowUpdate = true): mixed
     {
         // If unique ID is set, load from database
         $model = $this->modelClass;
@@ -110,6 +112,11 @@ class ShoppingCartDatabase extends ShoppingCartBase
                 'unique_id' => $uniqueId,
                 'cart_data' => json_encode(session()->get("{$this->sessionPrefix}.cart_data", [])),
             ]);
+        }
+        // Otherwise update existing cart with session data
+        else if($allowUpdate) {
+            $cart->cart_data = json_encode(session()->get("{$this->sessionPrefix}.cart_data", []));
+            $cart->save();
         }
 
         return $cart;

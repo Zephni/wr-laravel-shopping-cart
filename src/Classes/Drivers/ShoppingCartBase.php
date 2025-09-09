@@ -37,9 +37,11 @@ abstract class ShoppingCartBase
      */
     public static function getDriverAlias(): string
     {
-        return (is_callable(config('wr-laravel-shopping-cart.driver')))
-            ? call_user_func(config('wr-laravel-shopping-cart.driver'))
-            : config('wr-laravel-shopping-cart.driver');
+        $driver = config('wr-laravel-shopping-cart.driver');
+
+        return is_callable($driver)
+            ? call_user_func($driver)
+            : $driver;
     }
 
     /**
