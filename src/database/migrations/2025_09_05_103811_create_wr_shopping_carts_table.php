@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('unique_id', 1020)->nullable()->index();
             $table->json('cart_data')->nullable();
+            $table->json('additional_data')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -41,4 +41,12 @@ class ShoppingCartSession extends ShoppingCartBase
         // Load data from session
         $this->shoppingCartData = session()->get("{$this->sessionPrefix}.cart_data", []);
     }
+
+    /**
+     * Forget session data
+     */
+    public function forget(): void
+    {
+        session()->forget("{$this->sessionPrefix}.cart_data");
+    }
 }

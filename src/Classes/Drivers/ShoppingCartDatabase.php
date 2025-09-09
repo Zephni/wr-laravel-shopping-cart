@@ -24,6 +24,11 @@ class ShoppingCartDatabase extends ShoppingCartBase
     public bool $forgetSessionOnUniqueId;
 
     /**
+     * Additional data, stored in additional_data column
+     */
+    public array $additionalData = [];
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -89,6 +94,9 @@ class ShoppingCartDatabase extends ShoppingCartBase
 
         // Load cart data from cart or fall back to empty array
         $this->shoppingCartData = json_decode($cart->cart_data ?? '[]', true) ?? [];
+
+        // Load additional data if exists
+        $this->additionalData = json_decode($cart->additional_data ?? '[]', true) ?? [];
     }
 
     /**
@@ -120,5 +128,13 @@ class ShoppingCartDatabase extends ShoppingCartBase
         }
 
         return $cart;
+    }
+
+    /**
+     * Forget session data
+     */
+    public function forget(): void
+    {
+        session()->forget("{$this->sessionPrefix}.cart_data");
     }
 }
