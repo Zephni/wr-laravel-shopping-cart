@@ -92,7 +92,7 @@ class ShoppingCartDriverDatabase extends ShoppingCartDriverBase
         }
 
         // Create cart if it doesn't exist with the given unique ID
-        $cart = $this->createOrUpdateCartWithUniqueId($this->uniqueId, false);
+        $cart = $this->getAndHandleCartUpdates($this->uniqueId, false);
 
         // Load cart data from cart or fall back to empty array
         $this->shoppingCartData = json_decode($cart->cart_data ?? '[]', true) ?? [];
@@ -102,30 +102,45 @@ class ShoppingCartDriverDatabase extends ShoppingCartDriverBase
     }
 
     /**
-     * Create or update cart with unique ID, this method is public because we may need to call this
-     * during our checkout / register progress early in the case where a user has not yet logged in
-     * but needs the cart to be associated with their account - perhaps if they verify their email
-     * on a different device.
-     * 
-     * @return $cart Shopping cart instance or null
+     * Handles database operations for the shopping cart, including storing,
+     * retrieving, updating, and deleting cart items and related data.
+     *
+     * @param mixed $param1 Description of the first parameter.
+     * @param mixed $param2 Description of the second parameter.
+     * @return mixed Shopping cart instance or null
      */
-    public function createOrUpdateCartWithUniqueId(string $uniqueId, bool $allowUpdate = true): mixed
+    public function getAndHandleCartUpdates(string $uniqueId, bool $allowUpdate = true, bool $deleteIfEmpty = true): mixed
     {
+        // Get cart data from session
+        $cartData = session()->get("{$this->sessionPrefix}.cart_data", []);
+
+
         // If unique ID is set, load from database
         $model = $this->modelClass;
         $cart = $model::where('unique_id', $uniqueId)->first();
+
+        // If deleteIfEmpty is true and cart is empty, force delete and return null
+        if($deleteIfEmpty) {
+            $cartData = json_decode($cart->cart_data ?? '[]', true) ?? [];
+            if(empty($cartData) || (is_array($cartData) && count($cartData) === 0)) {
+                $cart->forceDelete();
+                $cart = null;
+            }
+
+            return $cart;
+        }
 
         // If cart doesn't exist, create it from session data
         if (!$cart) {
             // Create new cart record with session data
             $cart = $model::create([
                 'unique_id' => $uniqueId,
-                'cart_data' => json_encode(session()->get("{$this->sessionPrefix}.cart_data", [])),
+                'cart_data' => json_encode($cartData),
             ]);
         }
         // Otherwise update existing cart with session data
         else if($allowUpdate) {
-            $cart->cart_data = json_encode(session()->get("{$this->sessionPrefix}.cart_data", []));
+            $cart->cart_data = json_encode($cartData);
             $cart->save();
         }
 
@@ -137,7 +152,7 @@ class ShoppingCartDriverDatabase extends ShoppingCartDriverBase
      * 
      * @param ?string Leave null to get from current session, or pass a unique ID to get specific cart
      */
-    public function getCart(?string $uniqueId = null): mixed
+    public function getCartModel(?string $uniqueId = null): mixed
     {
         if(is_null($uniqueId)) {
             return WrShoppingCart::where('unique_id', $this->uniqueId)->first();
