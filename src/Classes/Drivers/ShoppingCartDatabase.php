@@ -1,22 +1,38 @@
 <?php
 namespace WebRegulate\LaravelShoppingCart\Classes\Drivers;
 
-use Exception;
-
 class ShoppingCartDatabase extends ShoppingCartBase
 {
     /**
-     * Model class, set from handler config
+     * Model class
      */
     public string $modelClass;
+
+    /**
+     * Unique ID for the cart
+     */
+    public ?string $uniqueId;
+
+    /**
+     * Session prefix
+     */
+    public string $sessionPrefix;
+
+    /**
+     * Forget session when unique ID exists
+     */
+    public bool $forgetSessionOnUniqueId;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        // Set model class from config
+        // Set properties from config
         $this->modelClass = $this->getHandlerConfig()['model'];
+        $this->uniqueId = $this->getHandlerConfig()['unique_id']();
+        $this->sessionPrefix = $this->getHandlerConfig()['session_prefix'];
+        $this->forgetSessionOnUniqueId = $this->getHandlerConfig()['forget_session_on_unique_id'] ?? false;
 
         // Call parent constructor
         parent::__construct();
@@ -29,13 +45,30 @@ class ShoppingCartDatabase extends ShoppingCartBase
      */
     public function save(): bool
     {
-        // Get cart either from new / existing record
-        $shoppingCartInstance = $this->getCart();
+        // Always save to session
+        session()->put("{$this->sessionPrefix}.cart_data", $this->getShoppingCartDataWithoutModels());
 
-        // Update cart_data
-        $shoppingCartInstance->update([
-            'cart_data' => json_encode($this->shoppingCartData),
-        ]);
+        // If unique ID is null, just use session
+        if (is_null($this->uniqueId)) {
+            return true;
+        }
+
+        // If unique ID is set, get cart from database and update or create
+        $model = $this->modelClass;
+        $cart = $model::where('unique_id', $this->uniqueId)->first();
+
+        // If cart exists, update it
+        if ($cart) {
+            $cart->cart_data = $this->getShoppingCartDataWithoutModels();
+            $cart->save();
+        }
+        // Otherwise create new cart record
+        else {
+            $model::create([
+                'unique_id' => $this->uniqueId,
+                'cart_data' => $this->getShoppingCartDataWithoutModels(),
+            ]);
+        }
 
         return true;
     }
@@ -45,28 +78,25 @@ class ShoppingCartDatabase extends ShoppingCartBase
      */
     public function load(): void
     {
-        // Get cart either from new / existing record
-        $shoppingCartInstance = $this->getCart();
-
-        // Check model is an instance of $this->modelClass
-        if (!($shoppingCartInstance instanceof $this->modelClass)) {
-            // Throw error
-            throw new Exception('Shopping cart model returned from wr-laravel-shoping-cart.get_cart config is not an instance of: ' . $this->modelClass);
+        // If unique ID is null, just use session
+        if (is_null($this->uniqueId)) {
+            $this->shoppingCartData = session()->get("{$this->sessionPrefix}.cart_data", []);
+            return;
         }
 
-        if ($shoppingCartInstance) {
-            $this->shoppingCartData = json_decode($shoppingCartInstance->cart_data, true) ?? [];
-        } else {
-            $this->shoppingCartData = [];
-        }
-    }
+        // If unique ID is set, load from database
+        $model = $this->modelClass;
+        $cart = $model::where('unique_id', $this->uniqueId)->first();
 
-    /**
-     * Get cart
-     */
-    public function getCart()
-    {
-        $getCartClosure = $this->getHandlerConfig()['get_cart'];
-        return call_user_func($getCartClosure);
+        // If cart doesn't exist, create it from session data
+        if (!$cart) {
+            // Create new cart record with session data
+            $cart = $model::create([
+                'unique_id' => $this->uniqueId,
+                'cart_data' => json_encode(session()->get("{$this->sessionPrefix}.cart_data", [])),
+            ]);
+        }
+
+        $this->shoppingCartData = json_decode($cart->cart_data ?? '[]', true) ?? [];
     }
 }

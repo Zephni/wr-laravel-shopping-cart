@@ -18,7 +18,9 @@ return [
         //     'driver' => ShoppingCartDatabase::class,
         //     'config' => [
         //         'model' => WrShoppingCart::class,
-        //         'get_cart' => fn() => WrShoppingCart::getCart(auth()->guest() ? null : auth()?->id()),
+        //         'unique_id' => fn() => auth()->guest() ? null : auth()?->id(),
+        //         'session_prefix' => 'wr-shopping-cart',
+        //         'forget_session_on_unique_id' => true,
         //     ]
         // ],
     ],

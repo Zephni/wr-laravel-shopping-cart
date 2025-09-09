@@ -4,21 +4,16 @@ namespace WebRegulate\LaravelShoppingCart\Classes\Drivers;
 class ShoppingCartSession extends ShoppingCartBase
 {
     /**
-     * Session container alias, set from handler config
+     * Session container alias
      */
     protected string $sessionPrefix;
-
-    /**
-     * Unique identifier for the shopping cart
-     */
-    protected string $uniqueId;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        // Set session prefix from config
+        // Set properties from config
         $this->sessionPrefix = $this->getHandlerConfig()['session_prefix'];
 
         // Call parent constructor

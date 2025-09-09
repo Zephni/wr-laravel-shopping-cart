@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('wr_shopping_carts', function (Blueprint $table) {
             $table->id();
-            $table->string('unique_id_priority', 1020)->nullable()->index();
-            $table->string('unique_id_fallback', 1020)->nullable()->index();
+            $table->string('unique_id', 1020)->nullable()->index();
             $table->json('cart_data')->nullable();
             $table->timestamps();
             $table->softDeletes();

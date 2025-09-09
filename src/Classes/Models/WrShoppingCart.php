@@ -11,8 +11,7 @@ class WrShoppingCart extends WrShoppingCartBase
     protected $table = 'wr_shopping_carts';
     
     protected $fillable = [
-        'unique_id_priority',
-        'unique_id_fallback',
+        'unique_id',
         'data',
         'cart_data',
     ];
