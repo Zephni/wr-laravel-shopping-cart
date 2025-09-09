@@ -1,7 +1,7 @@
 <?php
 namespace WebRegulate\LaravelShoppingCart\Classes\Drivers;
 
-class ShoppingCartSession extends ShoppingCartBase
+class ShoppingCartDriverSession extends ShoppingCartDriverBase
 {
     /**
      * Session container alias

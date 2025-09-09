@@ -3,7 +3,7 @@ namespace WebRegulate\LaravelShoppingCart\Classes\Drivers;
 
 use WebRegulate\LaravelShoppingCart\Classes\Models\WrShoppingCart;
 
-class ShoppingCartDatabase extends ShoppingCartBase
+class ShoppingCartDriverDatabase extends ShoppingCartDriverBase
 {
     /**
      * Model class

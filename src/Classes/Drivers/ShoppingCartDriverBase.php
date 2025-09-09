@@ -4,7 +4,7 @@ namespace WebRegulate\LaravelShoppingCart\Classes\Drivers;
 use Illuminate\Database\Eloquent\Model;
 use WebRegulate\LaravelShoppingCart\Classes\Traits\CartItem;
 
-abstract class ShoppingCartBase
+abstract class ShoppingCartDriverBase
 {
     /**
      * Shopping cart data. Note that each item in the cart MUST use this format (use the buildCartItemData method from the CartItem trait):

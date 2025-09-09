@@ -1,14 +1,14 @@
 <?php
 
-use WebRegulate\LaravelShoppingCart\Classes\Drivers\ShoppingCartSession;
-use WebRegulate\LaravelShoppingCart\Classes\Drivers\ShoppingCartDatabase;
+use WebRegulate\LaravelShoppingCart\Classes\Drivers\ShoppingCartDriverSession;
+use WebRegulate\LaravelShoppingCart\Classes\Drivers\ShoppingCartDriverDatabase;
 use WebRegulate\LaravelShoppingCart\Classes\Models\WrShoppingCart;
 
 return [
     // Drivers configuration
     'drivers' => [
         'session' => [
-            'driver' => ShoppingCartSession::class,
+            'driver' => ShoppingCartDriverSession::class,
             'config' => [
                 'session_prefix' => 'wr-shopping-cart',
             ]

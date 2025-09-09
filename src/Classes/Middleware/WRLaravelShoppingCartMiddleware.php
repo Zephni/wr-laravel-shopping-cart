@@ -5,7 +5,7 @@ namespace WebRegulate\LaravelShoppingCart\Classes\Middleware;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Closure;
-use WebRegulate\LaravelShoppingCart\Classes\Drivers\ShoppingCartBase;
+use WebRegulate\LaravelShoppingCart\Classes\Drivers\ShoppingCartDriverBase;
 
 class WRLaravelShoppingCartMiddleware
 {
@@ -17,7 +17,7 @@ class WRLaravelShoppingCartMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         $wrShoppingCartInstance = once(function() {
-            $driverAlias = ShoppingCartBase::getDriverAlias();
+            $driverAlias = ShoppingCartDriverBase::getDriverAlias();
             $class = config("wr-laravel-shopping-cart.drivers.{$driverAlias}.driver");
             return new $class();
         });
