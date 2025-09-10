@@ -104,25 +104,20 @@ class ShoppingCartDriverDatabase extends ShoppingCartDriverBase
     /**
      * Handles database operations for the shopping cart, including storing,
      * retrieving, updating, and deleting cart items and related data.
-     *
-     * @param mixed $param1 Description of the first parameter.
-     * @param mixed $param2 Description of the second parameter.
-     * @return mixed Shopping cart instance or null
      */
-    public function getAndHandleCartUpdates(string $uniqueId, bool $allowUpdate = true, bool $deleteIfEmpty = true): mixed
+    public function getAndHandleCartUpdates(string $uniqueId, bool $allowUpdate = true): mixed
     {
         // Get cart data from session
         $cartData = session()->get("{$this->sessionPrefix}.cart_data", []);
-
 
         // If unique ID is set, load from database
         $model = $this->modelClass;
         $cart = $model::where('unique_id', $uniqueId)->first();
 
-        // If cart exists and deleteIfEmpty is true and cart is empty, force delete and return null
-        if($cart && $deleteIfEmpty) {
+        // If cart exists but is empty, force delete and return null
+        if($cart) {
             $cartData = json_decode($cart->cart_data ?? '[]', true) ?? [];
-            if(empty($cartData) || (is_array($cartData) && count($cartData) === 0)) {
+            if(empty($cartData)) {
                 $cart->forceDelete();
                 $cart = null;
             }
@@ -130,6 +125,16 @@ class ShoppingCartDriverDatabase extends ShoppingCartDriverBase
             return $cart;
         }
 
+        // If cartData is empty, delete cart if exists and return null
+        if(empty($cartData)) {
+            if($cart) {
+                $cart->forceDelete();
+            }
+
+            return null;
+        }
+
+        // Cart is not empty, proceed
         // If cart doesn't exist, create it from session data
         if (!$cart) {
             // Create new cart record with session data
